@@ -22,7 +22,7 @@ const etapas = [
 
 export default function LeadsKanban({ busca, leads, notas, onLeadClick, onUpdateLeads }: LeadsKanbanProps) {
 
-  const leadsFiltrados = leads.filter((lead) =>
+  const leadsFiltrados = (leads || []).filter((lead) =>
     lead.nomeLead.toLowerCase().includes(busca.toLowerCase()) ||
     lead.empresa.toLowerCase().includes(busca.toLowerCase())
   );
@@ -35,7 +35,7 @@ export default function LeadsKanban({ busca, leads, notas, onLeadClick, onUpdate
 
     const novaEtapa = destination.droppableId as Lead['etapaFunil'];
     
-    const updatedLeads = leads.map(lead => 
+    const updatedLeads = (leads || []).map(lead => 
       lead.id === draggableId 
         ? { ...lead, etapaFunil: novaEtapa }
         : lead

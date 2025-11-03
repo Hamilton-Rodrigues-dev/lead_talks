@@ -27,7 +27,7 @@ const etapaColors: Record<Lead['etapaFunil'], string> = {
 
 export default function LeadsLista({ busca, leads, notas, onLeadClick }: LeadsListaProps) {
 
-  const leadsFiltrados = leads.filter((lead) =>
+  const leadsFiltrados = (leads || []).filter((lead) =>
     lead.nomeLead.toLowerCase().includes(busca.toLowerCase()) ||
     lead.empresa.toLowerCase().includes(busca.toLowerCase())
   );

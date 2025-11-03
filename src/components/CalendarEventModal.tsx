@@ -179,10 +179,9 @@ export default function CalendarEventModal({
                 <Label htmlFor="lead">Lead (opcional)</Label>
                 <Select value={leadId} onValueChange={setLeadId}>
                   <SelectTrigger id="lead">
-                    <SelectValue placeholder="Selecione um lead" />
+                    <SelectValue placeholder="Nenhum lead selecionado" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Nenhum</SelectItem>
                     {leads.map((lead) => (
                       <SelectItem key={lead.id} value={lead.id}>
                         {lead.nomeLead}
