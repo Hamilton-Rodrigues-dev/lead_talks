@@ -48,6 +48,23 @@ export interface Tarefa {
   status: 'pendente' | 'concluida';
   prioridade: 'baixa' | 'media' | 'alta';
   criadoPor: string;
+  criadoEm: string;
+  atualizadoEm: string;
+}
+
+export interface CalendarEvent {
+  id: string;
+  tipo: 'tarefa' | 'nota' | 'reuniao';
+  titulo: string;
+  descricao?: string;
+  leadId?: string;
+  nomeLead?: string;
+  data: string;
+  horaInicio?: string;
+  horaFim?: string;
+  status?: 'pendente' | 'concluida';
+  prioridade?: 'baixa' | 'media' | 'alta';
+  criadoEm: string;
 }
 
 export const mockUsuario: Usuario = {
@@ -167,6 +184,8 @@ export const mockTarefas: Tarefa[] = [
     status: 'pendente',
     prioridade: 'alta',
     criadoPor: 'Agência Brakeel',
+    criadoEm: '2025-10-01T10:00:00',
+    atualizadoEm: '2025-10-01T10:00:00',
   },
   {
     id: '2',
@@ -177,6 +196,8 @@ export const mockTarefas: Tarefa[] = [
     status: 'pendente',
     prioridade: 'media',
     criadoPor: 'Agência Brakeel',
+    criadoEm: '2025-09-28T14:30:00',
+    atualizadoEm: '2025-09-28T14:30:00',
   },
   {
     id: '3',
@@ -187,6 +208,8 @@ export const mockTarefas: Tarefa[] = [
     status: 'pendente',
     prioridade: 'alta',
     criadoPor: 'Agência Brakeel',
+    criadoEm: '2025-09-25T09:15:00',
+    atualizadoEm: '2025-09-25T09:15:00',
   },
   {
     id: '4',
@@ -197,6 +220,36 @@ export const mockTarefas: Tarefa[] = [
     status: 'concluida',
     prioridade: 'media',
     criadoPor: 'Agência Brakeel',
+    criadoEm: '2025-09-20T16:00:00',
+    atualizadoEm: '2025-09-20T16:00:00',
+  },
+];
+
+export const mockCalendarEvents: CalendarEvent[] = [
+  {
+    id: '1',
+    tipo: 'reuniao',
+    titulo: 'Reunião com Giovana Messias',
+    descricao: 'Apresentação de proposta',
+    leadId: '2',
+    nomeLead: 'Dra. Giovanna Masseli',
+    data: '2025-10-30',
+    horaInicio: '13:00',
+    horaFim: '13:30',
+    criadoEm: '2025-10-20T10:00:00',
+  },
+  {
+    id: '2',
+    tipo: 'tarefa',
+    titulo: 'Preparar apresentação',
+    descricao: 'Preparar slides para reunião',
+    leadId: '1',
+    nomeLead: 'Dr. João Pafuncio Siqueira',
+    data: '2025-10-30',
+    horaInicio: '09:00',
+    status: 'pendente',
+    prioridade: 'alta',
+    criadoEm: '2025-10-20T08:00:00',
   },
 ];
 

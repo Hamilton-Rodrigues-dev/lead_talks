@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { mockLeads, Lead } from "@/lib/mockData";
+import { mockLeads, mockNotas, Lead, NotaLead } from "@/lib/mockData";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 import { toast } from "sonner";
+import LeadDetailModal from "@/components/LeadDetailModal";
 
 interface LeadsKanbanProps {
   busca: string;
@@ -17,6 +18,9 @@ const etapas = [
 
 export default function LeadsKanban({ busca }: LeadsKanbanProps) {
   const [leads, setLeads] = useState<Lead[]>(mockLeads);
+  const [notas, setNotas] = useState<NotaLead[]>(mockNotas);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [leadSelecionado, setLeadSelecionado] = useState<Lead | null>(null);
 
   const leadsFiltrados = leads.filter((lead) =>
     lead.nomeLead.toLowerCase().includes(busca.toLowerCase()) ||
@@ -46,6 +50,26 @@ export default function LeadsKanban({ busca }: LeadsKanbanProps) {
 
   const calcularTotal = (leadsEtapa: Lead[]) => {
     return leadsEtapa.reduce((sum, lead) => sum + lead.valorVenda, 0);
+  };
+
+  const handleSaveLead = (lead: Lead) => {
+    setLeads(prev => prev.map(l => l.id === lead.id ? lead : l));
+    toast.success("Lead atualizado com sucesso!");
+  };
+
+  const handleAddNota = (nota: Omit<NotaLead, "id" | "criadoEm">) => {
+    const novaNota: NotaLead = {
+      ...nota,
+      id: Date.now().toString(),
+      criadoEm: new Date().toISOString(),
+    };
+    setNotas(prev => [...prev, novaNota]);
+    toast.success("Nota adicionada com sucesso!");
+  };
+
+  const handleCardClick = (lead: Lead) => {
+    setLeadSelecionado(lead);
+    setModalOpen(true);
   };
 
   return (
@@ -82,7 +106,8 @@ export default function LeadsKanban({ busca }: LeadsKanbanProps) {
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
-                            className={`p-4 cursor-move transition-shadow ${
+                            onClick={() => handleCardClick(lead)}
+                            className={`p-4 cursor-pointer transition-shadow ${
                               snapshot.isDragging ? 'shadow-lg rotate-2' : 'hover:shadow-md'
                             }`}
                           >
@@ -125,6 +150,15 @@ export default function LeadsKanban({ busca }: LeadsKanbanProps) {
           );
         })}
       </div>
+
+      <LeadDetailModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSave={handleSaveLead}
+        lead={leadSelecionado}
+        notas={notas}
+        onAddNota={handleAddNota}
+      />
     </DragDropContext>
   );
 }

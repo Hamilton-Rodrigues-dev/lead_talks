@@ -3,16 +3,74 @@ import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Plus, SlidersHorizontal } from "lucide-react";
-import { mockTarefas, Tarefa } from "@/lib/mockData";
+import { mockTarefas, mockLeads, Tarefa } from "@/lib/mockData";
+import TaskModal from "@/components/TaskModal";
+import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
 
 export default function Tarefas() {
   const [busca, setBusca] = useState("");
-  const [tarefas] = useState<Tarefa[]>(mockTarefas);
+  const [tarefas, setTarefas] = useState<Tarefa[]>(
+    [...mockTarefas].sort((a, b) => 
+      new Date(b.atualizadoEm).getTime() - new Date(a.atualizadoEm).getTime()
+    )
+  );
+  const [modalOpen, setModalOpen] = useState(false);
+  const [tarefaSelecionada, setTarefaSelecionada] = useState<Tarefa | null>(null);
 
   const tarefasFiltradas = tarefas.filter((tarefa) =>
     tarefa.nomeLead.toLowerCase().includes(busca.toLowerCase()) ||
     tarefa.descricaoTarefa.toLowerCase().includes(busca.toLowerCase())
   );
+
+  const handleSaveTarefa = (tarefaData: Partial<Tarefa>) => {
+    const agora = new Date().toISOString();
+    
+    if (tarefaData.id) {
+      // Edit existing
+      setTarefas(prev => {
+        const updated = prev.map(t => 
+          t.id === tarefaData.id 
+            ? { ...t, ...tarefaData, atualizadoEm: agora } as Tarefa
+            : t
+        );
+        return updated.sort((a, b) => 
+          new Date(b.atualizadoEm).getTime() - new Date(a.atualizadoEm).getTime()
+        );
+      });
+      toast.success("Tarefa atualizada com sucesso!");
+    } else {
+      // Create new
+      const novaTarefa: Tarefa = {
+        ...tarefaData,
+        id: Date.now().toString(),
+        criadoEm: agora,
+        atualizadoEm: agora,
+      } as Tarefa;
+      
+      setTarefas(prev => [novaTarefa, ...prev]);
+      toast.success("Tarefa criada com sucesso!");
+    }
+  };
+
+  const handleDeleteTarefa = (id: string) => {
+    setTarefas(prev => prev.filter(t => t.id !== id));
+    toast.success("Tarefa excluída com sucesso!");
+  };
+
+  const handleOpenModal = (tarefa?: Tarefa) => {
+    setTarefaSelecionada(tarefa || null);
+    setModalOpen(true);
+  };
+
+  const getPrioridadeColor = (prioridade: string) => {
+    switch (prioridade) {
+      case 'alta': return 'bg-red-500';
+      case 'media': return 'bg-amber-500';
+      case 'baixa': return 'bg-green-500';
+      default: return 'bg-gray-500';
+    }
+  };
 
   return (
     <Layout>
@@ -25,7 +83,7 @@ export default function Tarefas() {
               Gerencie suas tarefas e compromissos
             </p>
           </div>
-          <Button size="lg">
+          <Button size="lg" onClick={() => handleOpenModal()}>
             <Plus className="w-5 h-5 mr-2" />
             Nova tarefa
           </Button>
@@ -61,18 +119,31 @@ export default function Tarefas() {
                   <th className="text-left p-4 font-semibold text-sm">Nome</th>
                   <th className="text-left p-4 font-semibold text-sm">Tarefa</th>
                   <th className="text-left p-4 font-semibold text-sm">Data de Entrega</th>
+                  <th className="text-left p-4 font-semibold text-sm">Status</th>
+                  <th className="text-left p-4 font-semibold text-sm">Prioridade</th>
                 </tr>
               </thead>
               <tbody>
                 {tarefasFiltradas.map((tarefa) => (
                   <tr
                     key={tarefa.id}
-                    className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors"
+                    className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors cursor-pointer"
+                    onClick={() => handleOpenModal(tarefa)}
                   >
                     <td className="p-4 font-medium">{tarefa.nomeLead}</td>
                     <td className="p-4 text-muted-foreground">{tarefa.descricaoTarefa}</td>
                     <td className="p-4 text-muted-foreground">
                       {new Date(tarefa.dataEntrega).toLocaleDateString('pt-BR')}
+                    </td>
+                    <td className="p-4">
+                      <Badge variant={tarefa.status === 'concluida' ? 'default' : 'secondary'}>
+                        {tarefa.status === 'concluida' ? 'Concluída' : 'Pendente'}
+                      </Badge>
+                    </td>
+                    <td className="p-4">
+                      <Badge className={getPrioridadeColor(tarefa.prioridade)}>
+                        {tarefa.prioridade.charAt(0).toUpperCase() + tarefa.prioridade.slice(1)}
+                      </Badge>
                     </td>
                   </tr>
                 ))}
@@ -80,6 +151,15 @@ export default function Tarefas() {
             </table>
           </div>
         </div>
+
+        <TaskModal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          onSave={handleSaveTarefa}
+          onDelete={handleDeleteTarefa}
+          tarefa={tarefaSelecionada}
+          leads={mockLeads}
+        />
       </div>
     </Layout>
   );

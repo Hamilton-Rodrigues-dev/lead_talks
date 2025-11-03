@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { mockLeads, Lead } from "@/lib/mockData";
+import { mockLeads, mockNotas, Lead, NotaLead } from "@/lib/mockData";
 import { Badge } from "@/components/ui/badge";
+import LeadDetailModal from "@/components/LeadDetailModal";
+import { toast } from "sonner";
 
 interface LeadsListaProps {
   busca: string;
@@ -21,12 +23,35 @@ const etapaColors: Record<Lead['etapaFunil'], string> = {
 };
 
 export default function LeadsLista({ busca }: LeadsListaProps) {
-  const [leads] = useState<Lead[]>(mockLeads);
+  const [leads, setLeads] = useState<Lead[]>(mockLeads);
+  const [notas, setNotas] = useState<NotaLead[]>(mockNotas);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [leadSelecionado, setLeadSelecionado] = useState<Lead | null>(null);
 
   const leadsFiltrados = leads.filter((lead) =>
     lead.nomeLead.toLowerCase().includes(busca.toLowerCase()) ||
     lead.empresa.toLowerCase().includes(busca.toLowerCase())
   );
+
+  const handleSaveLead = (lead: Lead) => {
+    setLeads(prev => prev.map(l => l.id === lead.id ? lead : l));
+    toast.success("Lead atualizado com sucesso!");
+  };
+
+  const handleAddNota = (nota: Omit<NotaLead, "id" | "criadoEm">) => {
+    const novaNota: NotaLead = {
+      ...nota,
+      id: Date.now().toString(),
+      criadoEm: new Date().toISOString(),
+    };
+    setNotas(prev => [...prev, novaNota]);
+    toast.success("Nota adicionada com sucesso!");
+  };
+
+  const handleRowClick = (lead: Lead) => {
+    setLeadSelecionado(lead);
+    setModalOpen(true);
+  };
 
   return (
     <div className="bg-card rounded-xl border border-border overflow-hidden">
@@ -50,7 +75,8 @@ export default function LeadsLista({ busca }: LeadsListaProps) {
             {leadsFiltrados.map((lead) => (
               <tr
                 key={lead.id}
-                className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors"
+                onClick={() => handleRowClick(lead)}
+                className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors cursor-pointer"
               >
                 <td className="p-4 font-medium">{lead.nomeLead}</td>
                 <td className="p-4 text-muted-foreground">{lead.empresa}</td>
@@ -65,6 +91,15 @@ export default function LeadsLista({ busca }: LeadsListaProps) {
           </tbody>
         </table>
       </div>
+
+      <LeadDetailModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSave={handleSaveLead}
+        lead={leadSelecionado}
+        notas={notas}
+        onAddNota={handleAddNota}
+      />
     </div>
   );
 }
