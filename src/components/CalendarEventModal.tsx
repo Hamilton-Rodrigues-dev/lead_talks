@@ -49,20 +49,43 @@ export default function CalendarEventModal({
 
   useEffect(() => {
     if (event) {
-      setTipo(event.tipo);
-      setTitulo(event.titulo);
-      setDescricao(event.descricao || "");
-      setLeadId(event.leadId || "");
-      setData(new Date(event.data));
-      setHoraInicio(event.horaInicio || "");
-      setHoraFim(event.horaFim || "");
-      setStatus(event.status || "pendente");
-      setPrioridade(event.prioridade || "media");
+      try {
+        setTipo(event.tipo || "tarefa");
+        setTitulo(event.titulo || "");
+        setDescricao(event.descricao || "");
+        setLeadId(event.leadId || "");
+        
+        if (event.data) {
+          try {
+            setData(new Date(event.data));
+          } catch {
+            setData(new Date());
+          }
+        } else {
+          setData(new Date());
+        }
+        
+        setHoraInicio(event.horaInicio || "");
+        setHoraFim(event.horaFim || "");
+        setStatus(event.status || "pendente");
+        setPrioridade(event.prioridade || "media");
+      } catch (error) {
+        console.error("Erro ao carregar evento:", error);
+        setTipo("tarefa");
+        setTitulo("");
+        setDescricao("");
+        setLeadId("");
+        setData(new Date());
+        setHoraInicio("");
+        setHoraFim("");
+        setStatus("pendente");
+        setPrioridade("media");
+      }
     } else {
-      setTipo("tarefa");
+      setTipo((event as any)?.tipo || "tarefa");
       setTitulo("");
       setDescricao("");
-      setLeadId("");
+      setLeadId((event as any)?.leadId || "");
       setData(selectedDate || new Date());
       setHoraInicio(selectedTime || "");
       setHoraFim("");
@@ -153,7 +176,7 @@ export default function CalendarEventModal({
               </div>
 
               <div>
-                <Label htmlFor="lead">Lead {tipo === "tarefa" ? "(obrigatório)" : "(opcional)"}</Label>
+                <Label htmlFor="lead">Lead (opcional)</Label>
                 <Select value={leadId} onValueChange={setLeadId}>
                   <SelectTrigger id="lead">
                     <SelectValue placeholder="Selecione um lead" />
@@ -268,7 +291,7 @@ export default function CalendarEventModal({
             <Button variant="outline" onClick={onClose}>
               Cancelar
             </Button>
-            <Button onClick={handleSave} disabled={!titulo || !data || (tipo === "tarefa" && !leadId)}>
+            <Button onClick={handleSave} disabled={!titulo || !data}>
               Salvar
             </Button>
           </div>

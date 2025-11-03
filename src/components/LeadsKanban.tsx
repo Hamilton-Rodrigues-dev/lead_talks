@@ -8,6 +8,10 @@ import LeadDetailModal from "@/components/LeadDetailModal";
 
 interface LeadsKanbanProps {
   busca: string;
+  leads: Lead[];
+  notas: NotaLead[];
+  onLeadClick: (lead: Lead) => void;
+  onUpdateLeads: (leads: Lead[]) => void;
 }
 
 const etapas = [
@@ -16,11 +20,7 @@ const etapas = [
   { id: 'proposta', label: 'Apresentação Agendada', color: 'bg-blue-100 border-blue-300 text-blue-700' },
 ];
 
-export default function LeadsKanban({ busca }: LeadsKanbanProps) {
-  const [leads, setLeads] = useState<Lead[]>(mockLeads);
-  const [notas, setNotas] = useState<NotaLead[]>(mockNotas);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [leadSelecionado, setLeadSelecionado] = useState<Lead | null>(null);
+export default function LeadsKanban({ busca, leads, notas, onLeadClick, onUpdateLeads }: LeadsKanbanProps) {
 
   const leadsFiltrados = leads.filter((lead) =>
     lead.nomeLead.toLowerCase().includes(busca.toLowerCase()) ||
@@ -35,12 +35,13 @@ export default function LeadsKanban({ busca }: LeadsKanbanProps) {
 
     const novaEtapa = destination.droppableId as Lead['etapaFunil'];
     
-    setLeads(leads.map(lead => 
+    const updatedLeads = leads.map(lead => 
       lead.id === draggableId 
         ? { ...lead, etapaFunil: novaEtapa }
         : lead
-    ));
-
+    );
+    
+    onUpdateLeads(updatedLeads);
     toast.success(`Lead movido para ${etapas.find(e => e.id === novaEtapa)?.label}`);
   };
 
@@ -52,25 +53,6 @@ export default function LeadsKanban({ busca }: LeadsKanbanProps) {
     return leadsEtapa.reduce((sum, lead) => sum + lead.valorVenda, 0);
   };
 
-  const handleSaveLead = (lead: Lead) => {
-    setLeads(prev => prev.map(l => l.id === lead.id ? lead : l));
-    toast.success("Lead atualizado com sucesso!");
-  };
-
-  const handleAddNota = (nota: Omit<NotaLead, "id" | "criadoEm">) => {
-    const novaNota: NotaLead = {
-      ...nota,
-      id: Date.now().toString(),
-      criadoEm: new Date().toISOString(),
-    };
-    setNotas(prev => [...prev, novaNota]);
-    toast.success("Nota adicionada com sucesso!");
-  };
-
-  const handleCardClick = (lead: Lead) => {
-    setLeadSelecionado(lead);
-    setModalOpen(true);
-  };
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
@@ -106,7 +88,7 @@ export default function LeadsKanban({ busca }: LeadsKanbanProps) {
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
-                            onClick={() => handleCardClick(lead)}
+                            onClick={() => onLeadClick(lead)}
                             className={`p-4 cursor-pointer transition-shadow ${
                               snapshot.isDragging ? 'shadow-lg rotate-2' : 'hover:shadow-md'
                             }`}
@@ -151,14 +133,6 @@ export default function LeadsKanban({ busca }: LeadsKanbanProps) {
         })}
       </div>
 
-      <LeadDetailModal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onSave={handleSaveLead}
-        lead={leadSelecionado}
-        notas={notas}
-        onAddNota={handleAddNota}
-      />
     </DragDropContext>
   );
 }

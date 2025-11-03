@@ -254,9 +254,9 @@ export default function Calendario() {
                             handleEventClick(evento);
                           }}
                           className={`text-xs p-2 rounded cursor-pointer transition-colors ${
-                            evento.tipo === 'tarefa' ? 'bg-emerald-500 hover:bg-emerald-600' :
-                            evento.tipo === 'nota' ? 'bg-amber-500 hover:bg-amber-600' :
-                            'bg-blue-500 hover:bg-blue-600'
+                            evento.tipo === 'tarefa' ? 'bg-blue-500 hover:bg-blue-600' :
+                            evento.tipo === 'nota' ? 'bg-red-500 hover:bg-red-600' :
+                            'bg-green-500 hover:bg-green-600'
                           } text-white`}
                         >
                           <div className="font-medium truncate">{evento.titulo}</div>

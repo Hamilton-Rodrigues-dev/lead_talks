@@ -8,13 +8,6 @@ export interface Usuario {
   ultimoLogin: string;
 }
 
-export interface Contato {
-  id: string;
-  nome: string;
-  telefone: string;
-  segmento: string;
-  dataEntrada: string;
-}
 
 export interface Lead {
   id: string;
@@ -27,7 +20,23 @@ export interface Lead {
   valorVenda: number;
   valorMensal: number;
   criadoEm: string;
+  atualizadoEm?: string;
   tags?: string[];
+  etiquetas?: string[];
+  camposPersonalizados?: Record<string, any>;
+}
+
+export interface EtiquetaPersonalizada {
+  id: string;
+  nome: string;
+  cor: string;
+}
+
+export interface CampoPersonalizado {
+  id: string;
+  nome: string;
+  tipo: 'texto' | 'numero' | 'data' | 'selecao';
+  opcoes?: string[];
 }
 
 export interface NotaLead {
@@ -36,7 +45,8 @@ export interface NotaLead {
   texto: string;
   autor: string;
   criadoEm: string;
-  tipo: 'nota' | 'movimentacao' | 'tarefa';
+  tipo: 'nota' | 'movimentacao' | 'tarefa' | 'reuniao';
+  calendarioEventoId?: string;
 }
 
 export interface Tarefa {
@@ -50,6 +60,16 @@ export interface Tarefa {
   criadoPor: string;
   criadoEm: string;
   atualizadoEm: string;
+}
+
+export interface Contato {
+  id: string;
+  nome: string;
+  telefone: string;
+  segmento: string;
+  dataEntrada: string;
+  criadoEm?: string;
+  atualizadoEm?: string;
 }
 
 export interface CalendarEvent {
@@ -271,3 +291,16 @@ export const mockNotas: NotaLead[] = [
     tipo: 'nota',
   },
 ];
+
+// Utility functions
+export const getCurrentTimestamp = () => new Date().toISOString();
+
+export const sortByRecent = <T extends { criadoEm?: string; atualizadoEm?: string }>(
+  items: T[]
+): T[] => {
+  return [...items].sort((a, b) => {
+    const dateA = new Date(a.atualizadoEm || a.criadoEm || 0).getTime();
+    const dateB = new Date(b.atualizadoEm || b.criadoEm || 0).getTime();
+    return dateB - dateA;
+  });
+};

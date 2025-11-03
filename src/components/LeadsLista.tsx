@@ -6,6 +6,9 @@ import { toast } from "sonner";
 
 interface LeadsListaProps {
   busca: string;
+  leads: Lead[];
+  notas: NotaLead[];
+  onLeadClick: (lead: Lead) => void;
 }
 
 const etapaLabels: Record<Lead['etapaFunil'], string> = {
@@ -22,36 +25,13 @@ const etapaColors: Record<Lead['etapaFunil'], string> = {
   fechamento: 'bg-purple-500',
 };
 
-export default function LeadsLista({ busca }: LeadsListaProps) {
-  const [leads, setLeads] = useState<Lead[]>(mockLeads);
-  const [notas, setNotas] = useState<NotaLead[]>(mockNotas);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [leadSelecionado, setLeadSelecionado] = useState<Lead | null>(null);
+export default function LeadsLista({ busca, leads, notas, onLeadClick }: LeadsListaProps) {
 
   const leadsFiltrados = leads.filter((lead) =>
     lead.nomeLead.toLowerCase().includes(busca.toLowerCase()) ||
     lead.empresa.toLowerCase().includes(busca.toLowerCase())
   );
 
-  const handleSaveLead = (lead: Lead) => {
-    setLeads(prev => prev.map(l => l.id === lead.id ? lead : l));
-    toast.success("Lead atualizado com sucesso!");
-  };
-
-  const handleAddNota = (nota: Omit<NotaLead, "id" | "criadoEm">) => {
-    const novaNota: NotaLead = {
-      ...nota,
-      id: Date.now().toString(),
-      criadoEm: new Date().toISOString(),
-    };
-    setNotas(prev => [...prev, novaNota]);
-    toast.success("Nota adicionada com sucesso!");
-  };
-
-  const handleRowClick = (lead: Lead) => {
-    setLeadSelecionado(lead);
-    setModalOpen(true);
-  };
 
   return (
     <div className="bg-card rounded-xl border border-border overflow-hidden">
@@ -75,7 +55,7 @@ export default function LeadsLista({ busca }: LeadsListaProps) {
             {leadsFiltrados.map((lead) => (
               <tr
                 key={lead.id}
-                onClick={() => handleRowClick(lead)}
+                onClick={() => onLeadClick(lead)}
                 className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors cursor-pointer"
               >
                 <td className="p-4 font-medium">{lead.nomeLead}</td>
@@ -92,14 +72,6 @@ export default function LeadsLista({ busca }: LeadsListaProps) {
         </table>
       </div>
 
-      <LeadDetailModal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onSave={handleSaveLead}
-        lead={leadSelecionado}
-        notas={notas}
-        onAddNota={handleAddNota}
-      />
     </div>
   );
 }
