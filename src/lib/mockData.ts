@@ -9,13 +9,22 @@ export interface Usuario {
 }
 
 
+export interface EtapaFunil {
+  id: string;
+  label: string;
+  cor: string;
+  borderColor: string;
+  textColor: string;
+  ordem: number;
+}
+
 export interface Lead {
   id: string;
   nomeLead: string;
   telefone: string;
   email: string;
   empresa: string;
-  etapaFunil: 'novo' | 'contato' | 'proposta' | 'fechamento';
+  etapaFunil: string;
   responsavel: string;
   valorVenda: number;
   valorMensal: number;
@@ -86,6 +95,33 @@ export interface CalendarEvent {
   prioridade?: 'baixa' | 'media' | 'alta';
   criadoEm: string;
 }
+
+export const mockEtapasFunil: EtapaFunil[] = [
+  { 
+    id: 'novo', 
+    label: 'Contato Inicial', 
+    cor: 'bg-emerald-100',
+    borderColor: 'border-emerald-300',
+    textColor: 'text-emerald-700',
+    ordem: 1 
+  },
+  { 
+    id: 'contato', 
+    label: 'Diagnóstico da Dor do Cliente', 
+    cor: 'bg-red-100',
+    borderColor: 'border-red-300',
+    textColor: 'text-red-700',
+    ordem: 2 
+  },
+  { 
+    id: 'proposta', 
+    label: 'Apresentação Agendada', 
+    cor: 'bg-blue-100',
+    borderColor: 'border-blue-300',
+    textColor: 'text-blue-700',
+    ordem: 3 
+  },
+];
 
 export const mockUsuario: Usuario = {
   id: '1',

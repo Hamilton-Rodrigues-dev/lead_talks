@@ -7,13 +7,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Lead, NotaLead, EtiquetaPersonalizada, CampoPersonalizado } from "@/lib/mockData";
+import { Lead, NotaLead, EtiquetaPersonalizada, CampoPersonalizado, EtapaFunil } from "@/lib/mockData";
 import { ChevronLeft, Plus, Mic, Trash2, Calendar, CheckSquare } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
+import EtiquetaDialog from "@/components/EtiquetaDialog";
+import CampoDialog from "@/components/CampoDialog";
 
 interface LeadDetailModalProps {
   open: boolean;
@@ -25,21 +27,8 @@ interface LeadDetailModalProps {
   onAddNota: (nota: Omit<NotaLead, "id" | "criadoEm">) => void;
   onCreateTask?: (leadId: string) => void;
   onCreateMeeting?: (leadId: string) => void;
+  etapas: EtapaFunil[];
 }
-
-const etapaLabels: Record<Lead['etapaFunil'], string> = {
-  novo: 'Novo Lead',
-  contato: 'Contato',
-  proposta: 'Proposta',
-  fechamento: 'Fechamento',
-};
-
-const etapaColors: Record<Lead['etapaFunil'], string> = {
-  novo: 'bg-emerald-500',
-  contato: 'bg-red-500',
-  proposta: 'bg-blue-500',
-  fechamento: 'bg-purple-500',
-};
 
 export default function LeadDetailModal({ 
   open, 
@@ -50,7 +39,8 @@ export default function LeadDetailModal({
   notas, 
   onAddNota,
   onCreateTask,
-  onCreateMeeting 
+  onCreateMeeting,
+  etapas 
 }: LeadDetailModalProps) {
   const [formData, setFormData] = useState<Lead | null>(null);
   const [novaNota, setNovaNota] = useState("");
@@ -58,6 +48,10 @@ export default function LeadDetailModal({
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [etiquetas, setEtiquetas] = useState<EtiquetaPersonalizada[]>([]);
   const [campos, setCampos] = useState<CampoPersonalizado[]>([]);
+  const [showEtiquetaDialog, setShowEtiquetaDialog] = useState(false);
+  const [showCampoDialog, setShowCampoDialog] = useState(false);
+  const [etiquetaEditando, setEtiquetaEditando] = useState<EtiquetaPersonalizada | null>(null);
+  const [campoEditando, setCampoEditando] = useState<CampoPersonalizado | null>(null);
 
   useEffect(() => {
     if (lead) {
@@ -109,6 +103,40 @@ export default function LeadDetailModal({
 
   const leadNotas = notas.filter(n => n.leadId === formData.id);
 
+  const handleSaveEtiqueta = (etiqueta: EtiquetaPersonalizada) => {
+    if (etiquetaEditando) {
+      setEtiquetas(prev => prev.map(e => e.id === etiqueta.id ? etiqueta : e));
+      toast.success("Etiqueta atualizada!");
+    } else {
+      setEtiquetas(prev => [...prev, etiqueta]);
+      toast.success("Etiqueta adicionada!");
+    }
+    setShowEtiquetaDialog(false);
+    setEtiquetaEditando(null);
+  };
+
+  const handleDeleteEtiqueta = (id: string) => {
+    setEtiquetas(prev => prev.filter(e => e.id !== id));
+    toast.success("Etiqueta removida!");
+  };
+
+  const handleSaveCampo = (campo: CampoPersonalizado) => {
+    if (campoEditando) {
+      setCampos(prev => prev.map(c => c.id === campo.id ? campo : c));
+      toast.success("Campo atualizado!");
+    } else {
+      setCampos(prev => [...prev, campo]);
+      toast.success("Campo adicionado!");
+    }
+    setShowCampoDialog(false);
+    setCampoEditando(null);
+  };
+
+  const handleDeleteCampo = (id: string) => {
+    setCampos(prev => prev.filter(c => c.id !== id));
+    toast.success("Campo removido!");
+  };
+
   const getTipoColor = (tipo: string) => {
     switch (tipo) {
       case 'nota':
@@ -138,12 +166,12 @@ export default function LeadDetailModal({
   return (
     <>
       <Dialog open={open} onOpenChange={onClose}>
-        <DialogContent className="max-w-6xl h-[90vh] p-0">
-          <div className="flex h-full">
+        <DialogContent className="max-w-6xl max-h-[90vh] p-0 flex flex-col overflow-hidden">
+          <div className="flex h-full overflow-hidden">
             {/* Main Content */}
             <div className="flex-1 flex flex-col overflow-hidden">
               {/* Header */}
-              <div className="p-6 border-b">
+              <div className="p-6 border-b flex-shrink-0">
                 <div className="flex items-center gap-2 mb-4">
                   <Button variant="ghost" size="icon" onClick={onClose}>
                     <ChevronLeft className="w-5 h-5" />
@@ -154,14 +182,16 @@ export default function LeadDetailModal({
                 <div className="space-y-3">
                   <div>
                     <Label className="text-sm text-muted-foreground">Funil de Vendas</Label>
-                    <Select value={formData.etapaFunil} onValueChange={(v) => setFormData({ ...formData, etapaFunil: v as any })}>
+                    <Select value={formData.etapaFunil} onValueChange={(v) => setFormData({ ...formData, etapaFunil: v })}>
                       <SelectTrigger className="mt-1">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {Object.entries(etapaLabels).map(([key, label]) => (
-                          <SelectItem key={key} value={key}>
-                            <Badge className={etapaColors[key as Lead['etapaFunil']]}>{label}</Badge>
+                        {etapas.sort((a, b) => a.ordem - b.ordem).map((etapa) => (
+                          <SelectItem key={etapa.id} value={etapa.id}>
+                            <div className={`inline-flex items-center px-2 py-1 rounded ${etapa.cor} ${etapa.textColor}`}>
+                              {etapa.label}
+                            </div>
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -196,14 +226,14 @@ export default function LeadDetailModal({
               </div>
 
               {/* Tabs */}
-              <Tabs defaultValue="principal" className="flex-1 flex flex-col overflow-hidden">
-                <TabsList className="w-full justify-start rounded-none border-b px-6">
+              <Tabs defaultValue="principal" className="flex-1 flex flex-col min-h-0">
+                <TabsList className="flex-shrink-0 w-full justify-start rounded-none border-b px-6">
                   <TabsTrigger value="principal">Principal</TabsTrigger>
                   <TabsTrigger value="briefing">Briefing de Prospecção</TabsTrigger>
                   <TabsTrigger value="config">Configurações</TabsTrigger>
                 </TabsList>
 
-                <ScrollArea className="flex-1">
+                <div className="flex-1 overflow-y-auto">
                   <TabsContent value="principal" className="p-6 space-y-4 mt-0">
                     <div className="space-y-4">
                       <div>
@@ -300,7 +330,14 @@ export default function LeadDetailModal({
                         <p className="text-sm text-muted-foreground mb-4">
                           Crie etiquetas personalizadas para organizar seus leads.
                         </p>
-                        <Button variant="outline" className="w-full">
+                        <Button 
+                          variant="outline" 
+                          className="w-full"
+                          onClick={() => {
+                            setEtiquetaEditando(null);
+                            setShowEtiquetaDialog(true);
+                          }}
+                        >
                           <Plus className="w-4 h-4 mr-2" />
                           Adicionar Nova Etiqueta
                         </Button>
@@ -312,7 +349,11 @@ export default function LeadDetailModal({
                                   <div className="w-4 h-4 rounded" style={{ backgroundColor: etiqueta.cor }} />
                                   <span>{etiqueta.nome}</span>
                                 </div>
-                                <Button variant="ghost" size="icon">
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon"
+                                  onClick={() => handleDeleteEtiqueta(etiqueta.id)}
+                                >
                                   <Trash2 className="w-4 h-4" />
                                 </Button>
                               </div>
@@ -326,7 +367,14 @@ export default function LeadDetailModal({
                         <p className="text-sm text-muted-foreground mb-4">
                           Adicione campos customizados ao formulário do lead.
                         </p>
-                        <Button variant="outline" className="w-full">
+                        <Button 
+                          variant="outline" 
+                          className="w-full"
+                          onClick={() => {
+                            setCampoEditando(null);
+                            setShowCampoDialog(true);
+                          }}
+                        >
                           <Plus className="w-4 h-4 mr-2" />
                           Adicionar Novo Campo
                         </Button>
@@ -338,7 +386,11 @@ export default function LeadDetailModal({
                                   <span className="font-medium">{campo.nome}</span>
                                   <span className="text-sm text-muted-foreground ml-2">({campo.tipo})</span>
                                 </div>
-                                <Button variant="ghost" size="icon">
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon"
+                                  onClick={() => handleDeleteCampo(campo.id)}
+                                >
                                   <Trash2 className="w-4 h-4" />
                                 </Button>
                               </div>
@@ -348,11 +400,11 @@ export default function LeadDetailModal({
                       </div>
                     </div>
                   </TabsContent>
-                </ScrollArea>
+                </div>
               </Tabs>
 
               {/* Footer */}
-              <div className="p-6 border-t flex justify-between gap-2">
+              <div className="p-6 border-t flex-shrink-0 flex justify-between gap-2">
                 <div>
                   {lead?.id && onDelete && (
                     <Button variant="destructive" onClick={() => setShowDeleteDialog(true)}>
@@ -373,8 +425,8 @@ export default function LeadDetailModal({
             </div>
 
             {/* Sidebar - Histórico */}
-            <div className="w-96 border-l bg-muted/20 flex flex-col">
-              <div className="p-4 border-b bg-primary/5">
+            <div className="w-96 border-l bg-muted/20 flex flex-col overflow-hidden">
+              <div className="p-4 border-b bg-primary/5 flex-shrink-0">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium">Adição do Lead</span>
                   <span className="text-xs text-muted-foreground">
@@ -402,7 +454,7 @@ export default function LeadDetailModal({
                 </div>
               </ScrollArea>
 
-              <div className="p-4 border-t space-y-2">
+              <div className="p-4 border-t flex-shrink-0 space-y-2">
                 <div className="flex items-center gap-2 mb-2">
                   <Button 
                     size="sm" 
@@ -483,6 +535,26 @@ export default function LeadDetailModal({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <EtiquetaDialog
+        open={showEtiquetaDialog}
+        onClose={() => {
+          setShowEtiquetaDialog(false);
+          setEtiquetaEditando(null);
+        }}
+        onSave={handleSaveEtiqueta}
+        etiqueta={etiquetaEditando}
+      />
+
+      <CampoDialog
+        open={showCampoDialog}
+        onClose={() => {
+          setShowCampoDialog(false);
+          setCampoEditando(null);
+        }}
+        onSave={handleSaveCampo}
+        campo={campoEditando}
+      />
     </>
   );
 }

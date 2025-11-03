@@ -1,10 +1,10 @@
-import { useState } from "react";
-import { mockLeads, mockNotas, Lead, NotaLead } from "@/lib/mockData";
+import { mockLeads, mockNotas, Lead, NotaLead, EtapaFunil } from "@/lib/mockData";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
+import { Plus } from "lucide-react";
 import { toast } from "sonner";
-import LeadDetailModal from "@/components/LeadDetailModal";
 
 interface LeadsKanbanProps {
   busca: string;
@@ -12,15 +12,19 @@ interface LeadsKanbanProps {
   notas: NotaLead[];
   onLeadClick: (lead: Lead) => void;
   onUpdateLeads: (leads: Lead[]) => void;
+  etapas: EtapaFunil[];
+  onAddEtapa: () => void;
 }
 
-const etapas = [
-  { id: 'novo', label: 'Contato Inicial', color: 'bg-emerald-100 border-emerald-300 text-emerald-700' },
-  { id: 'contato', label: 'Diagnóstico da Dor do Cliente', color: 'bg-red-100 border-red-300 text-red-700' },
-  { id: 'proposta', label: 'Apresentação Agendada', color: 'bg-blue-100 border-blue-300 text-blue-700' },
-];
-
-export default function LeadsKanban({ busca, leads, notas, onLeadClick, onUpdateLeads }: LeadsKanbanProps) {
+export default function LeadsKanban({ 
+  busca, 
+  leads, 
+  notas, 
+  onLeadClick, 
+  onUpdateLeads,
+  etapas,
+  onAddEtapa 
+}: LeadsKanbanProps) {
 
   const leadsFiltrados = (leads || []).filter((lead) =>
     lead.nomeLead.toLowerCase().includes(busca.toLowerCase()) ||
@@ -33,7 +37,7 @@ export default function LeadsKanban({ busca, leads, notas, onLeadClick, onUpdate
     if (!destination) return;
     if (destination.droppableId === source.droppableId && destination.index === source.index) return;
 
-    const novaEtapa = destination.droppableId as Lead['etapaFunil'];
+    const novaEtapa = destination.droppableId;
     
     const updatedLeads = (leads || []).map(lead => 
       lead.id === draggableId 
@@ -42,7 +46,8 @@ export default function LeadsKanban({ busca, leads, notas, onLeadClick, onUpdate
     );
     
     onUpdateLeads(updatedLeads);
-    toast.success(`Lead movido para ${etapas.find(e => e.id === novaEtapa)?.label}`);
+    const etapaLabel = etapas.find(e => e.id === novaEtapa)?.label || novaEtapa;
+    toast.success(`Lead movido para ${etapaLabel}`);
   };
 
   const getLeadsPorEtapa = (etapaId: string) => {
@@ -53,18 +58,19 @@ export default function LeadsKanban({ busca, leads, notas, onLeadClick, onUpdate
     return leadsEtapa.reduce((sum, lead) => sum + lead.valorVenda, 0);
   };
 
+  const etapasOrdenadas = [...etapas].sort((a, b) => a.ordem - b.ordem);
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {etapas.map((etapa) => {
+      <div className="flex gap-6 overflow-x-auto pb-4">
+        {etapasOrdenadas.map((etapa) => {
           const leadsEtapa = getLeadsPorEtapa(etapa.id);
           const total = calcularTotal(leadsEtapa);
 
           return (
-            <div key={etapa.id} className="space-y-4">
+            <div key={etapa.id} className="flex-shrink-0 w-[320px] space-y-4">
               {/* Header */}
-              <div className={`${etapa.color} border-2 rounded-lg p-4`}>
+              <div className={`${etapa.cor} ${etapa.borderColor} ${etapa.textColor} border-2 rounded-lg p-4`}>
                 <h3 className="font-semibold">{etapa.label}</h3>
                 <p className="text-sm mt-1">
                   {leadsEtapa.length} leads: R$ {total.toFixed(2)}
@@ -131,6 +137,20 @@ export default function LeadsKanban({ busca, leads, notas, onLeadClick, onUpdate
             </div>
           );
         })}
+        
+        {/* Coluna para adicionar nova etapa */}
+        <div className="flex-shrink-0 w-[320px]">
+          <Button 
+            variant="outline" 
+            className="w-full h-[100px] border-dashed border-2 hover:bg-muted/50"
+            onClick={onAddEtapa}
+          >
+            <Plus className="w-8 h-8" />
+          </Button>
+          <p className="text-sm text-center text-muted-foreground mt-2">
+            Adicionar Nova Etapa
+          </p>
+        </div>
       </div>
 
     </DragDropContext>

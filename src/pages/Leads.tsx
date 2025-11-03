@@ -3,11 +3,12 @@ import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Plus, LayoutGrid, List } from "lucide-react";
-import { mockLeads, mockNotas, Lead, NotaLead, CalendarEvent, getCurrentTimestamp } from "@/lib/mockData";
+import { mockLeads, mockNotas, mockEtapasFunil, Lead, NotaLead, CalendarEvent, EtapaFunil, getCurrentTimestamp } from "@/lib/mockData";
 import LeadsKanban from "@/components/LeadsKanban";
 import LeadsLista from "@/components/LeadsLista";
 import LeadDetailModal from "@/components/LeadDetailModal";
 import CalendarEventModal from "@/components/CalendarEventModal";
+import EtapaConfigModal from "@/components/EtapaConfigModal";
 import { toast } from "sonner";
 
 export default function Leads() {
@@ -19,6 +20,9 @@ export default function Leads() {
   const [leadSelecionado, setLeadSelecionado] = useState<Lead | null>(null);
   const [calendarModalOpen, setCalendarModalOpen] = useState(false);
   const [eventoSelecionado, setEventoSelecionado] = useState<Partial<CalendarEvent> | null>(null);
+  const [etapas, setEtapas] = useState<EtapaFunil[]>(mockEtapasFunil);
+  const [etapaModalOpen, setEtapaModalOpen] = useState(false);
+  const [etapaEditando, setEtapaEditando] = useState<EtapaFunil | null>(null);
 
   const handleNovaLead = () => {
     const novoLead: Lead = {
@@ -111,6 +115,25 @@ export default function Leads() {
     setModalOpen(true);
   };
 
+  const handleSaveEtapa = (etapa: EtapaFunil) => {
+    const etapaExiste = etapas.find(e => e.id === etapa.id);
+    
+    if (etapaExiste) {
+      setEtapas(prev => prev.map(e => e.id === etapa.id ? etapa : e));
+      toast.success("Etapa atualizada!");
+    } else {
+      setEtapas(prev => [...prev, etapa]);
+      toast.success("Etapa criada!");
+    }
+    setEtapaModalOpen(false);
+    setEtapaEditando(null);
+  };
+
+  const handleAddEtapa = () => {
+    setEtapaEditando(null);
+    setEtapaModalOpen(true);
+  };
+
   return (
     <Layout>
       <div className="p-8 space-y-6">
@@ -168,6 +191,8 @@ export default function Leads() {
               setModalOpen(true);
             }}
             onUpdateLeads={setLeads}
+            etapas={etapas}
+            onAddEtapa={handleAddEtapa}
           />
         ) : (
           <LeadsLista 
@@ -191,6 +216,7 @@ export default function Leads() {
           onAddNota={handleAddNota}
           onCreateTask={handleCreateTask}
           onCreateMeeting={handleCreateMeeting}
+          etapas={etapas}
         />
 
         <CalendarEventModal
@@ -202,6 +228,17 @@ export default function Leads() {
           onSave={handleSaveCalendarEvent}
           event={eventoSelecionado as any}
           leads={leads}
+        />
+
+        <EtapaConfigModal
+          open={etapaModalOpen}
+          onClose={() => {
+            setEtapaModalOpen(false);
+            setEtapaEditando(null);
+          }}
+          onSave={handleSaveEtapa}
+          etapa={etapaEditando}
+          existingEtapas={etapas}
         />
       </div>
     </Layout>
