@@ -24,14 +24,14 @@ export default function Leads() {
   const [etapaModalOpen, setEtapaModalOpen] = useState(false);
   const [etapaEditando, setEtapaEditando] = useState<EtapaFunil | null>(null);
 
-  const handleNovaLead = () => {
+  const handleNovaLead = (etapaId: string) => {
     const novoLead: Lead = {
       id: Date.now().toString(),
       nomeLead: "",
       telefone: "",
       email: "",
       empresa: "",
-      etapaFunil: "novo",
+      etapaFunil: etapaId,
       responsavel: "Agência Brakeel",
       valorVenda: 0,
       valorMensal: 0,
@@ -134,6 +134,9 @@ export default function Leads() {
     setEtapaModalOpen(true);
   };
 
+  const handleNovaLeadPadrao = () => handleNovaLead("novo");
+
+
   return (
     <Layout>
       <div className="p-8 space-y-6">
@@ -145,7 +148,7 @@ export default function Leads() {
               Gerencie seu funil de vendas
             </p>
           </div>
-          <Button size="lg" onClick={handleNovaLead}>
+          <Button size="lg" onClick={handleNovaLeadPadrao}>
             <Plus className="w-5 h-5 mr-2" />
             Nova Lead
           </Button>
@@ -193,6 +196,7 @@ export default function Leads() {
             onUpdateLeads={setLeads}
             etapas={etapas}
             onAddEtapa={handleAddEtapa}
+             onAddLead={handleNovaLead}
           />
         ) : (
           <LeadsLista 
