@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Target } from "lucide-react";
+import logo from "@/assets/logo.png"; // ajuste o caminho se necessário
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,7 +14,7 @@ export default function Login() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email || !senha) {
       toast.error("Preencha todos os campos");
       return;
@@ -27,14 +28,13 @@ export default function Login() {
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-background via-muted to-background p-4">
       <div className="w-full max-w-md">
-        {/* Logo */}
         <div className="flex flex-col items-center mb-8">
-          <div className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center mb-4 shadow-lg">
-            <Target className="w-10 h-10 text-primary-foreground" />
-          </div>
-          <h1 className="text-3xl font-bold text-center">
-            Lead <span className="text-primary">Talks</span>
-          </h1>
+          <img
+            src={logo}
+            alt="Lead Talks Logo"
+            className="h-16 w-auto mb-4 drop-shadow-lg"
+          />
+          <h1 className="text-3xl font-bold text-center">Lead Talks</h1>
           <p className="text-muted-foreground text-center mt-2">
             Gerencie seus leads com inteligência
           </p>
@@ -67,7 +67,10 @@ export default function Login() {
               />
             </div>
 
-            <Button type="submit" className="w-full h-12 text-base font-semibold">
+            <Button
+              type="submit"
+              className="w-full h-12 text-base font-semibold"
+            >
               Entrar
             </Button>
 
