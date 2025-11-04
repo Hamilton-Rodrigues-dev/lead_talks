@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { 
+import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
@@ -11,65 +11,77 @@ import {
   SidebarMenuItem,
   SidebarProvider,
   SidebarTrigger,
-  useSidebar 
-} from '@/components/ui/sidebar';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { 
-  LogOut, 
-  LayoutDashboard, 
-  Users, 
+  useSidebar,
+} from "@/components/ui/sidebar";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  LogOut,
+  LayoutDashboard,
+  Users,
   Target,
   Contact,
   Calendar,
   CheckSquare,
-  Menu
-} from 'lucide-react';
-import { useIsMobile } from '@/hooks/use-mobile';
-import logo from '@/assets/logo.png';
+  Menu,
+} from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
+import logo from "@/assets/logo.png";
 // import { useAuth } from '@/contexts/AuthContext'; // <-- COMENTADO
 
 const menuItems = [
-  { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { path: '/leads', label: 'Leads', icon: Target },
-  { path: '/contatos', label: 'Contatos', icon: Contact },
-  { path: '/calendario', label: 'Calendário', icon: Calendar },
-  { path: '/tarefas', label: 'Tarefas', icon: CheckSquare },
-  { path: '/usuarios', label: 'Usuários', icon: Users, requiredRole: 'admin' as const },
+  { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { path: "/leads", label: "Leads", icon: Target },
+  { path: "/contatos", label: "Contatos", icon: Contact },
+  { path: "/calendario", label: "Calendário", icon: Calendar },
+  { path: "/tarefas", label: "Tarefas", icon: CheckSquare },
+  {
+    path: "/usuarios",
+    label: "Usuários",
+    icon: Users,
+    requiredRole: "admin" as const,
+  },
 ];
 
 function AppSidebar() {
   const location = useLocation();
   // const { profile, role, signOut } = useAuth(); // <-- COMENTADO
-  
+
   // --- Bloco de Mock para Teste (sem login) --- // <-- ADICIONADO
-  const profile = { 
-    nome: 'Usuário de Teste', 
-    email: 'teste@exemplo.com', 
-    avatar_url: '' 
+  const profile = {
+    nome: "Usuário de Teste",
+    email: "teste@exemplo.com",
+    avatar_url: "",
   };
-  const role = 'admin'; // Mude para 'gerente' ou 'vendedor' para testar os menus
-  const signOut = () => console.log('Cliquei no Sair (Mock)');
+  const role = "admin"; // Mude para 'gerente' ou 'vendedor' para testar os menus
+  const signOut = () => console.log("Cliquei no Sair (Mock)");
   // --- Fim do Bloco de Mock --- // <-- ADICIONADO
 
   const { state } = useSidebar();
-  const collapsed = state === 'collapsed';
+  const collapsed = state === "collapsed";
 
   return (
     <Sidebar collapsible="icon">
-      <div className="p-6 border-b border-sidebar-border">
-        {!collapsed ? (
-          <div className="flex items-center gap-3">
-            <img src={logo} alt="Logo" className="h-10" />
-            <div>
-              <h1 className="text-lg font-bold text-sidebar-foreground">Lead Talks</h1>
-              <p className="text-xs text-muted-foreground">CRM System</p>
-            </div>
-          </div>
+      <div className="border-b border-sidebar-border p-4 flex items-center justify-between">
+        {collapsed ? (
+          // 👉 Quando o menu está fechado, só o botão
+          <SidebarTrigger className="mx-auto text-muted-foreground hover:text-foreground" />
         ) : (
-          <img src={logo} alt="Logo" className="h-8 mx-auto" />
+          // 👉 Quando aberto, mostra logo + título + botão
+          <>
+            <div className="flex items-center gap-2">
+              <img src={logo} alt="Logo" className="h-9" />
+              <div>
+                <h1 className="text-base font-semibold text-sidebar-foreground">
+                  Lead Talks
+                </h1>
+                <p className="text-xs text-muted-foreground">CRM System</p>
+              </div>
+            </div>
+            <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
+          </>
         )}
       </div>
 
@@ -79,7 +91,7 @@ function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => {
-                if (item.requiredRole && role !== 'admin') {
+                if (item.requiredRole && role !== "admin") {
                   return null;
                 }
 
@@ -107,23 +119,31 @@ function AppSidebar() {
           <Avatar className={collapsed ? "w-8 h-8 mx-auto" : "w-9 h-9"}>
             <AvatarImage src={profile?.avatar_url} />
             <AvatarFallback className="bg-primary text-primary-foreground">
-              {profile?.nome?.charAt(0) || 'U'}
+              {profile?.nome?.charAt(0) || "U"}
             </AvatarFallback>
           </Avatar>
-          
+
           {!collapsed && (
             <>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate text-sidebar-foreground">{profile?.nome}</p>
-                <p className="text-xs text-muted-foreground truncate">{profile?.email}</p>
+                <p className="text-sm font-medium truncate text-sidebar-foreground">
+                  {profile?.nome}
+                </p>
+                <p className="text-xs text-muted-foreground truncate">
+                  {profile?.email}
+                </p>
                 {role && (
                   <Badge variant="outline" className="mt-1 text-xs">
-                    {role === 'admin' ? '👑 Admin' : role === 'gerente' ? '📊 Gerente' : '💼 Vendedor'}
+                    {role === "admin"
+                      ? "👑 Admin"
+                      : role === "gerente"
+                      ? "📊 Gerente"
+                      : "💼 Vendedor"}
                   </Badge>
                 )}
               </div>
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 size="icon"
                 onClick={signOut}
                 title="Sair"
@@ -143,13 +163,13 @@ function MobileSidebar({ onClose }: { onClose: () => void }) {
   // const { profile, role, signOut } = useAuth(); // <-- COMENTADO
 
   // --- Bloco de Mock para Teste (sem login) --- // <-- ADICIONADO
-  const profile = { 
-    nome: 'Usuário de Teste', 
-    email: 'teste@exemplo.com', 
-    avatar_url: '' 
+  const profile = {
+    nome: "Usuário de Teste",
+    email: "teste@exemplo.com",
+    avatar_url: "",
   };
-  const role = 'admin'; // Mude para 'gerente' ou 'vendedor' para testar os menus
-  const signOut = () => console.log('Cliquei no Sair (Mock)');
+  const role = "admin"; // Mude para 'gerente' ou 'vendedor' para testar os menus
+  const signOut = () => console.log("Cliquei no Sair (Mock)");
   // --- Fim do Bloco de Mock --- // <-- ADICIONADO
 
   const handleLogout = () => {
@@ -171,7 +191,7 @@ function MobileSidebar({ onClose }: { onClose: () => void }) {
 
       <nav className="flex-1 p-4 space-y-2">
         {menuItems.map((item) => {
-          if (item.requiredRole && role !== 'admin') return null;
+          if (item.requiredRole && role !== "admin") return null;
 
           const isActive = location.pathname === item.path;
           const Icon = item.icon;
@@ -183,8 +203,8 @@ function MobileSidebar({ onClose }: { onClose: () => void }) {
               onClick={onClose}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                 isActive
-                  ? 'bg-primary text-primary-foreground'
-                  : 'hover:bg-accent'
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-accent"
               }`}
             >
               <Icon className="w-5 h-5" />
@@ -199,20 +219,26 @@ function MobileSidebar({ onClose }: { onClose: () => void }) {
           <Avatar className="w-9 h-9">
             <AvatarImage src={profile?.avatar_url} />
             <AvatarFallback className="bg-primary text-primary-foreground">
-              {profile?.nome?.charAt(0) || 'U'}
+              {profile?.nome?.charAt(0) || "U"}
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium truncate">{profile?.nome}</p>
-            <p className="text-xs text-muted-foreground truncate">{profile?.email}</p>
+            <p className="text-xs text-muted-foreground truncate">
+              {profile?.email}
+            </p>
             {role && (
               <Badge variant="outline" className="mt-1 text-xs">
-                {role === 'admin' ? '👑 Admin' : role === 'gerente' ? '📊 Gerente' : '💼 Vendedor'}
+                {role === "admin"
+                  ? "👑 Admin"
+                  : role === "gerente"
+                  ? "📊 Gerente"
+                  : "💼 Vendedor"}
               </Badge>
             )}
           </div>
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             size="icon"
             onClick={handleLogout}
             title="Sair"
@@ -249,14 +275,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <img src={logo} alt="Logo" className="h-8" />
               <h1 className="font-bold">Lead Talks</h1>
             </div>
-            
+
             <div className="w-10" />
           </div>
         </header>
 
-        <main className="p-4">
-          {children}
-        </main>
+        <main className="p-4">{children}</main>
       </div>
     );
   }
@@ -265,15 +289,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background">
         <AppSidebar />
-        
+
         <main className="flex-1 overflow-auto">
-          <div className="sticky top-0 z-10 bg-background/95 backdrop-blur border-b border-border p-4">
-            <SidebarTrigger />
-          </div>
-          
-          <div className="p-8">
-            {children}
-          </div>
+          <div className="p-8">{children}</div>
         </main>
       </div>
     </SidebarProvider>
