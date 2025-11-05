@@ -427,7 +427,7 @@ export default function LeadDetailModal({
             {/* Sidebar - Histórico */}
             <div className="w-96 border-l bg-muted/20 flex flex-col overflow-hidden">
               <div className="p-4 border-b bg-primary/5 flex-shrink-0">
-                <div className="flex items-center justify-between mb-2">
+                <div className="flex flex-col items-start justify-between mb-2">
                   <span className="text-sm font-medium">Adição do Lead</span>
                   <span className="text-xs text-muted-foreground">
                     {format(new Date(formData.criadoEm), "dd/MM/yyyy HH:mm", { locale: ptBR })}

@@ -137,6 +137,11 @@ export default function Leads() {
   const handleNovaLeadPadrao = () => handleNovaLead("novo");
 
 
+
+
+
+  
+
   return (
     <Layout>
       <div className="p-8 space-y-6">
@@ -222,7 +227,7 @@ export default function Leads() {
           onCreateMeeting={handleCreateMeeting}
           etapas={etapas}
         />
-
+  
         <CalendarEventModal
           open={calendarModalOpen}
           onClose={() => {

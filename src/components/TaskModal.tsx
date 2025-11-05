@@ -21,6 +21,7 @@ interface TaskModalProps {
   onDelete?: (id: string) => void;
   tarefa?: Tarefa | null;
   leads: Lead[];
+  hideCloseIcon?: boolean;
 }
 
 export default function TaskModal({ open, onClose, onSave, onDelete, tarefa, leads }: TaskModalProps) {
