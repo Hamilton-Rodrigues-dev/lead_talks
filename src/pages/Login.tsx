@@ -32,7 +32,7 @@ export default function Login() {
           <img
             src={logo}
             alt="Lead Talks Logo"
-            className="h-16 w-auto mb-4 drop-shadow-lg"
+            className="h-16 w-auto mb-4 drop-shadow-lg rouded-[8px]"
           />
           <h1 className="text-3xl font-bold text-center">Lead Talks</h1>
           <p className="text-muted-foreground text-center mt-2">
