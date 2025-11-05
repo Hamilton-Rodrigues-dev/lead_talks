@@ -134,15 +134,15 @@ export default function Calendario() {
     <Layout>
       <div className="space-y-6">
         {/* Header */}
-        <div className="space-y-3 flex flex-col lg:flex-row items-center justify-between">
-          <div>
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
+          <div className="text-center lg:text-left">
             <h1 className="text-3xl font-bold">Calendário</h1>
+            <p className="text-muted-foreground mt-1">
+              Gerencie sua agenda
+            </p>
+          
           </div>
           <div className="flex w-full flex-col lg:w-auto lg:flex-row gap-2">
-            <div className="w-full relative lg:w-64">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input placeholder="Buscar eventos..." className="pl-9 bg-card" />
-            </div>
             <Button variant="outline">
               <RefreshCw className="w-4 h-4 mr-2" />
               Sincronizar
@@ -153,13 +153,17 @@ export default function Calendario() {
             </Button>
           </div>
         </div>
+            <div className="w-full relative ">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input placeholder="Buscar eventos..." className="pl-9 bg-card" />
+            </div>
 
         {/* Toolbar */}
         <div className=" bg-card rounded-xl border border-border p-6">
           <div className="space-y-3 flex flex-col lg:flex-row items-center justify-between">
             <div className="flex flex-col lg:flex-row items-center gap-4">
               <h2 className="text-2xl font-bold capitalize">
-                {visualizacao === "mes" ? nomeMes : nomeSemana}
+                {visualizacao === "mes"  ? nomeMes : nomeSemana}
               </h2>
               
             </div>

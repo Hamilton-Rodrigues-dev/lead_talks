@@ -89,7 +89,7 @@ export default function Contatos() {
 
   return (
     <Layout>
-      <div className="p-4 lg:p-8 space-y-6">
+      <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
           <div className="text-center lg:text-left">
