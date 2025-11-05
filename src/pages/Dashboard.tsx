@@ -2,6 +2,7 @@ import Layout from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Target, CheckCircle2, Clock, TrendingUp } from "lucide-react";
 import { mockLeads, mockTarefas } from "@/lib/mockData";
+import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
   const leadsAtivos = mockLeads.length;
@@ -16,7 +17,7 @@ export default function Dashboard() {
     acc[lead.etapaFunil] = (acc[lead.etapaFunil] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
-
+const navigate = useNavigate();
   return (
     <Layout>
       <div className="space-y-8">
@@ -30,7 +31,7 @@ export default function Dashboard() {
 
         {/* KPIs */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card className="border-l-4 border-l-primary">
+          <Card onClick={() => navigate("/leads")} className="border-l-4 border-l-primary cursor-pointer">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 Leads Ativos
@@ -45,7 +46,7 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card className="border-l-4 border-l-orange-500">
+          <Card onClick={() => navigate("/tarefas")} className="border-l-4 border-l-orange-500 cursor-pointer">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 Tarefas Pendentes
@@ -60,7 +61,7 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card className="border-l-4 border-l-green-500">
+          <Card onClick={() => navigate("/tarefas")} className="border-l-4 border-l-green-500 cursor-pointer">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 Taxa de Conclusão
@@ -75,7 +76,7 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card className="border-l-4 border-l-blue-500">
+          <Card onClick={() => navigate("/leads")} className="border-l-4 border-l-blue-500 cursor-pointer">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 Conversão

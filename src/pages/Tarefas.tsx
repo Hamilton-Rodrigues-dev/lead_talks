@@ -70,13 +70,13 @@ export default function Tarefas() {
   const getPrioridadeColor = (prioridade: string) => {
     switch (prioridade) {
       case "alta":
-        return "bg-red-500";
+        return "bg-red-500 hover:bg-red-600";
       case "media":
-        return "bg-amber-500";
+        return "bg-amber-500 hover:bg-amber-600";
       case "baixa":
-        return "bg-green-500";
+        return "bg-green-500 hover:bg-green-600";
       default:
-        return "bg-gray-400";
+        return "bg-gray-400 hover:bg-gray-500";
     }
   };
 
@@ -176,7 +176,7 @@ export default function Tarefas() {
                       <Badge
                         className={`${getPrioridadeColor(
                           tarefa.prioridade
-                        )} min-w-[90px] justify-center text-white`}
+                        )} min-w-[90px] justify-center text-white transition-colors`}
                       >
                         {tarefa.prioridade.charAt(0).toUpperCase() +
                           tarefa.prioridade.slice(1)}

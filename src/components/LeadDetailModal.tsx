@@ -198,6 +198,26 @@ export default function LeadDetailModal({
     }
   };
 
+  const formatarTelefone = (valor: string) => {
+    // Remove tudo que não for número
+    const apenasNumeros = valor.replace(/\D/g, "");
+
+    // Aplica a máscara conforme o tamanho
+    if (apenasNumeros.length <= 10) {
+      // Formato (67) 9999-9999
+      return apenasNumeros
+        .replace(/^(\d{2})(\d)/, "($1) $2")
+        .replace(/(\d{4})(\d)/, "$1-$2")
+        .slice(0, 14);
+    } else {
+      // Formato (67) 99999-9999
+      return apenasNumeros
+        .replace(/^(\d{2})(\d)/, "($1) $2")
+        .replace(/(\d{5})(\d)/, "$1-$2")
+        .slice(0, 15);
+    }
+  };
+
   return (
     <>
       <Dialog open={open} onOpenChange={onClose}>
@@ -318,14 +338,14 @@ export default function LeadDetailModal({
                         <div>
                           <Label>Tel. comercial</Label>
                           <Input
+                            placeholder="(67) 99999-9999"
                             value={formData.telefone}
                             onChange={(e) =>
                               setFormData({
                                 ...formData,
-                                telefone: e.target.value,
+                                telefone: formatarTelefone(e.target.value),
                               })
                             }
-                            placeholder="Número de Telefone"
                           />
                         </div>
                         <div>
@@ -532,109 +552,131 @@ export default function LeadDetailModal({
             </div>
 
             {/* Histórico */}
-           <div className="lg:w-96 border-l bg-muted/20 flex flex-col w-full h-full">
-  {/* Header fixo */}
-  <div className="p-4 border-b bg-primary/5 flex-shrink-0">
-    <div className="flex flex-col items-start justify-between mb-2">
-      <span className="text-sm font-medium">Adição do Lead</span>
-      <span className="text-xs text-muted-foreground">
-        {format(new Date(formData.criadoEm), "dd/MM/yyyy HH:mm", { locale: ptBR })}
-      </span>
-    </div>
-  </div>
+            <div className="lg:w-96 border-l bg-muted/20 flex flex-col w-full h-full">
+              {/* Header fixo */}
+              <div className="p-4 border-b bg-primary/5 flex-shrink-0">
+                <div className="flex flex-col items-start justify-between mb-2">
+                  <span className="text-sm font-medium">Adição do Lead</span>
+                  <span className="text-xs text-muted-foreground">
+                    {format(new Date(formData.criadoEm), "dd/MM/yyyy HH:mm", {
+                      locale: ptBR,
+                    })}
+                  </span>
+                </div>
+              </div>
 
-  {/* Corpo com scroll e rodapé fixo */}
-  <div className="flex flex-col flex-1 min-h-0">
-    {/* Lista de notas (no topo, com scroll interno) */}
-    <div className="flex-1 overflow-y-auto p-4 space-y-4">
-      {leadNotas.map((nota) => (
-        <div key={nota.id} className="bg-card p-3 rounded-lg border text-sm">
-          <div className="flex items-start justify-between mb-2">
-            <span className="font-medium">{nota.autor}</span>
-            <span className="text-xs text-muted-foreground">
-              {format(new Date(nota.criadoEm), "dd/MM HH:mm", { locale: ptBR })}
-            </span>
-          </div>
-          <p className="text-muted-foreground">{nota.texto}</p>
-          <Badge
-            variant="outline"
-            className={`mt-2 text-xs ${getTipoColor(nota.tipo)} text-white border-0`}
-          >
-            {getTipoLabel(nota.tipo)}
-          </Badge>
-        </div>
-      ))}
-    </div>
+              {/* Corpo com scroll e rodapé fixo */}
+              <div className="flex flex-col flex-1 min-h-0">
+                {/* Lista de notas (no topo, com scroll interno) */}
+                <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                  {leadNotas.map((nota) => (
+                    <div
+                      key={nota.id}
+                      className="bg-card p-3 rounded-lg border text-sm"
+                    >
+                      <div className="flex items-start justify-between mb-2">
+                        <span className="font-medium">{nota.autor}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {format(new Date(nota.criadoEm), "dd/MM HH:mm", {
+                            locale: ptBR,
+                          })}
+                        </span>
+                      </div>
+                      <p className="text-muted-foreground">{nota.texto}</p>
+                      <Badge
+                        variant="outline"
+                        className={`mt-2 text-xs ${getTipoColor(
+                          nota.tipo
+                        )} text-white border-0`}
+                      >
+                        {getTipoLabel(nota.tipo)}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
 
-    {/* Rodapé fixo no bottom */}
-    <div className="p-4 border-t flex-shrink-0 space-y-2 bg-card/60 backdrop-blur-sm">
-      <div className="flex items-center gap-2 mb-2">
-        <Button
-          size="sm"
-          variant={tipoNota === "nota" ? "default" : "outline"}
-          className={tipoNota === "nota" ? "flex-1 bg-red-500 hover:bg-red-600" : "flex-1"}
-          onClick={() => setTipoNota("nota")}
-        >
-          Notas
-        </Button>
-        <Button
-          size="sm"
-          variant={tipoNota === "tarefa" ? "default" : "outline"}
-          className={tipoNota === "tarefa" ? "flex-1 bg-blue-500 hover:bg-blue-600" : "flex-1"}
-          onClick={() => setTipoNota("tarefa")}
-        >
-          <CheckSquare className="w-4 h-4 mr-1" />
-          Tarefa
-        </Button>
-        <Button
-          size="sm"
-          variant={tipoNota === "reuniao" ? "default" : "outline"}
-          className={tipoNota === "reuniao" ? "flex-1 bg-green-500 hover:bg-green-600" : "flex-1"}
-          onClick={() => setTipoNota("reuniao")}
-        >
-          <Calendar className="w-4 h-4 mr-1" />
-          Reunião
-        </Button>
-      </div>
+                {/* Rodapé fixo no bottom */}
+                <div className="p-4 border-t flex-shrink-0 space-y-2 bg-card/60 backdrop-blur-sm">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Button
+                      size="sm"
+                      variant={tipoNota === "nota" ? "default" : "outline"}
+                      className={
+                        tipoNota === "nota"
+                          ? "flex-1 bg-red-500 hover:bg-red-600"
+                          : "flex-1"
+                      }
+                      onClick={() => setTipoNota("nota")}
+                    >
+                      Notas
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant={tipoNota === "tarefa" ? "default" : "outline"}
+                      className={
+                        tipoNota === "tarefa"
+                          ? "flex-1 bg-blue-500 hover:bg-blue-600"
+                          : "flex-1"
+                      }
+                      onClick={() => setTipoNota("tarefa")}
+                    >
+                      <CheckSquare className="w-4 h-4 mr-1" />
+                      Tarefa
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant={tipoNota === "reuniao" ? "default" : "outline"}
+                      className={
+                        tipoNota === "reuniao"
+                          ? "flex-1 bg-green-500 hover:bg-green-600"
+                          : "flex-1"
+                      }
+                      onClick={() => setTipoNota("reuniao")}
+                    >
+                      <Calendar className="w-4 h-4 mr-1" />
+                      Reunião
+                    </Button>
+                  </div>
 
-      {tipoNota === "nota" ? (
-        <>
-          <div className="flex gap-2">
-            <Textarea
-              value={novaNota}
-              onChange={(e) => setNovaNota(e.target.value)}
-              placeholder="Escreva uma nota..."
-              rows={2}
-              className="flex-1"
-            />
-            <Button size="icon" variant="outline">
-              <Mic className="w-4 h-4" />
-            </Button>
-          </div>
-          <Button
-            onClick={handleAddNota}
-            className="w-full"
-            disabled={!novaNota.trim()}
-          >
-            Adicionar
-          </Button>
-        </>
-      ) : (
-        <div className="space-y-2">
-          <p className="text-sm text-muted-foreground">
-            {tipoNota === "tarefa"
-              ? "Clique para criar uma tarefa no calendário"
-              : "Clique para agendar uma reunião no calendário"}
-          </p>
-          <Button onClick={handleAddNota} className="w-full">
-            {tipoNota === "tarefa" ? "Criar Tarefa" : "Agendar Reunião"}
-          </Button>
-        </div>
-      )}
-    </div>
-  </div>
-</div>
-
+                  {tipoNota === "nota" ? (
+                    <>
+                      <div className="flex gap-2">
+                        <Textarea
+                          value={novaNota}
+                          onChange={(e) => setNovaNota(e.target.value)}
+                          placeholder="Escreva uma nota..."
+                          rows={2}
+                          className="flex-1"
+                        />
+                        <Button size="icon" variant="outline">
+                          <Mic className="w-4 h-4" />
+                        </Button>
+                      </div>
+                      <Button
+                        onClick={handleAddNota}
+                        className="w-full"
+                        disabled={!novaNota.trim()}
+                      >
+                        Adicionar
+                      </Button>
+                    </>
+                  ) : (
+                    <div className="space-y-2">
+                      <p className="text-sm text-muted-foreground">
+                        {tipoNota === "tarefa"
+                          ? "Clique para criar uma tarefa no calendário"
+                          : "Clique para agendar uma reunião no calendário"}
+                      </p>
+                      <Button onClick={handleAddNota} className="w-full">
+                        {tipoNota === "tarefa"
+                          ? "Criar Tarefa"
+                          : "Agendar Reunião"}
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
