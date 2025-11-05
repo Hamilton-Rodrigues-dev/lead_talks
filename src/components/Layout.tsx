@@ -29,47 +29,41 @@ import {
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import logo from "@/assets/logo.png";
-// import { useAuth } from '@/contexts/AuthContext'; // <-- COMENTADO
 
+// --- Menu principal ---
 const menuItems = [
   { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { path: "/leads", label: "Leads", icon: Target },
   { path: "/contatos", label: "Contatos", icon: Contact },
   { path: "/calendario", label: "Calendário", icon: Calendar },
+  { path: "/leads", label: "Leads", icon: Target },
   { path: "/tarefas", label: "Tarefas", icon: CheckSquare },
-  {
-    path: "/usuarios",
-    label: "Usuários",
-    icon: Users,
-    requiredRole: "admin" as const,
-  },
 ];
 
 function AppSidebar() {
   const location = useLocation();
-  // const { profile, role, signOut } = useAuth(); // <-- COMENTADO
-
-  // --- Bloco de Mock para Teste (sem login) --- // <-- ADICIONADO
-  const profile = {
-    nome: "Usuário de Teste",
-    email: "teste@exemplo.com",
-    avatar_url: "",
-  };
-  const role = "admin"; // Mude para 'gerente' ou 'vendedor' para testar os menus
-  const signOut = () => console.log("Cliquei no Sair (Mock)");
-  // --- Fim do Bloco de Mock --- // <-- ADICIONADO
-
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
 
+  // --- Mock temporário ---
+  const profile = {
+    nome: "Brakeel Rodrigues",
+    email: "agencia@brakeel.com",
+    avatar_url: "",
+  };
+  const role = "admin";
+
+  const signOut = async () => {
+    console.log("Saindo...");
+    window.location.href = "/"; // redireciona via navegador
+  };
+
   return (
     <Sidebar collapsible="icon">
+      {/* Topo com logo */}
       <div className="border-b border-sidebar-border p-4 flex items-center justify-between">
         {collapsed ? (
-          // 👉 Quando o menu está fechado, só o botão
           <SidebarTrigger className="mx-auto text-muted-foreground hover:text-foreground" />
         ) : (
-          // 👉 Quando aberto, mostra logo + título + botão
           <>
             <div className="flex items-center gap-2">
               <img src={logo} alt="Logo" className="h-9 rounded-[8px]" />
@@ -85,25 +79,44 @@ function AppSidebar() {
         )}
       </div>
 
+      {/* Conteúdo */}
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Menu Principal</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => {
-                if (item.requiredRole && role !== "admin") {
-                  return null;
-                }
-
                 const isActive = location.pathname === item.path;
                 const Icon = item.icon;
 
                 return (
                   <SidebarMenuItem key={item.path}>
-                    <SidebarMenuButton asChild isActive={isActive}>
-                      <Link to={item.path}>
-                        <Icon className="w-5 h-5" />
-                        <span>{item.label}</span>
+                    <SidebarMenuButton asChild>
+                      <Link
+                        to={item.path}
+                        className={`flex items-center gap-3 px-4 py-2 rounded-md transition-colors duration-200 ${
+                          isActive
+                            ? "bg-[#DDD6FF]  text-[#5D0EC0]"
+                            : "text-muted-foreground hover:bg-muted/20"
+                        }`}
+                      >
+                        <Icon
+                          className={`w-5 h-5 transition-colors ${
+                            isActive
+                              ? "stroke-[#5D0EC0]"
+                              : "stroke-muted-foreground text-muted-foreground"
+                          }`}
+                        />
+
+                        <span
+                          className={`text-sm font-medium transition-colors ${
+                            isActive
+                              ? "text-[#5D0EC0]"
+                              : "text-muted-foreground"
+                          }`}
+                        >
+                          {item.label}
+                        </span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -114,8 +127,9 @@ function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
+      {/* Rodapé com perfil */}
       <div className="p-4 border-t border-sidebar-border mt-auto">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center justify-center gap-3">
           <Avatar className={collapsed ? "w-8 h-8 mx-auto" : "w-9 h-9"}>
             <AvatarImage src={profile?.avatar_url} />
             <AvatarFallback className="bg-primary text-primary-foreground">
@@ -160,20 +174,15 @@ function AppSidebar() {
 
 function MobileSidebar({ onClose }: { onClose: () => void }) {
   const location = useLocation();
-  // const { profile, role, signOut } = useAuth(); // <-- COMENTADO
-
-  // --- Bloco de Mock para Teste (sem login) --- // <-- ADICIONADO
   const profile = {
-    nome: "Usuário de Teste",
-    email: "teste@exemplo.com",
+    nome: "Brakeel Rodrigues",
+    email: "agencia@brakeel.com",
     avatar_url: "",
   };
-  const role = "admin"; // Mude para 'gerente' ou 'vendedor' para testar os menus
-  const signOut = () => console.log("Cliquei no Sair (Mock)");
-  // --- Fim do Bloco de Mock --- // <-- ADICIONADO
+  const role = "admin";
 
   const handleLogout = () => {
-    signOut();
+    window.location.href = "/";
     onClose();
   };
 
@@ -191,8 +200,6 @@ function MobileSidebar({ onClose }: { onClose: () => void }) {
 
       <nav className="flex-1 p-4 space-y-2">
         {menuItems.map((item) => {
-          if (item.requiredRole && role !== "admin") return null;
-
           const isActive = location.pathname === item.path;
           const Icon = item.icon;
 
@@ -201,14 +208,27 @@ function MobileSidebar({ onClose }: { onClose: () => void }) {
               key={item.path}
               to={item.path}
               onClick={onClose}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-200 ${
                 isActive
-                  ? "bg-primary text-primary-foreground"
-                  : "hover:bg-accent"
+                  ? "bg-[#DDD6FF] text-[#5D0EC0]"
+                  : "text-muted-foreground hover:bg-muted/20"
               }`}
             >
-              <Icon className="w-5 h-5" />
-              <span className="font-medium">{item.label}</span>
+              <Icon
+                className={`w-5 h-5 transition-colors ${
+                  isActive
+                    ? "stroke-[#5D0EC0]"
+                    : "stroke-muted-foreground text-muted-foreground"
+                }`}
+              />
+
+              <span
+                className={`font-medium ${
+                  isActive ? "text-[#5D0EC0]" : "text-muted-foreground"
+                }`}
+              >
+                {item.label}
+              </span>
             </Link>
           );
         })}
@@ -273,7 +293,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
             <div className="flex items-center gap-2">
               <img src={logo} alt="Logo" className="h-8 rounded-[8px]" />
-              <h1 className="font-bold">Lead Talks</h1>
+              <h1 className="font-bold text-[#5D0EC0]">Lead Talks</h1>
             </div>
 
             <div className="w-10" />
@@ -289,7 +309,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background">
         <AppSidebar />
-
         <main className="flex-1 overflow-auto">
           <div className="p-8">{children}</div>
         </main>
