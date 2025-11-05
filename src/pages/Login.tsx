@@ -36,7 +36,7 @@ export default function Login() {
           />
           <h1 className="text-3xl font-bold text-center">Lead Talks</h1>
           <p className="text-muted-foreground text-center mt-2">
-            teste Gerencie seus leads com inteligência
+            Gerencie seus leads com inteligência
           </p>
         </div>
 
