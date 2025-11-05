@@ -3,7 +3,16 @@ import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Plus, LayoutGrid, List } from "lucide-react";
-import { mockLeads, mockNotas, mockEtapasFunil, Lead, NotaLead, CalendarEvent, EtapaFunil, getCurrentTimestamp } from "@/lib/mockData";
+import {
+  mockLeads,
+  mockNotas,
+  mockEtapasFunil,
+  Lead,
+  NotaLead,
+  CalendarEvent,
+  EtapaFunil,
+  getCurrentTimestamp,
+} from "@/lib/mockData";
 import LeadsKanban from "@/components/LeadsKanban";
 import LeadsLista from "@/components/LeadsLista";
 import LeadDetailModal from "@/components/LeadDetailModal";
@@ -13,13 +22,16 @@ import { toast } from "sonner";
 
 export default function Leads() {
   const [busca, setBusca] = useState("");
-  const [visualizacao, setVisualizacao] = useState<'kanban' | 'lista'>('kanban');
+  const [visualizacao, setVisualizacao] = useState<"kanban" | "lista">(
+    "kanban"
+  );
   const [leads, setLeads] = useState<Lead[]>(mockLeads);
   const [notas, setNotas] = useState<NotaLead[]>(mockNotas);
   const [modalOpen, setModalOpen] = useState(false);
   const [leadSelecionado, setLeadSelecionado] = useState<Lead | null>(null);
   const [calendarModalOpen, setCalendarModalOpen] = useState(false);
-  const [eventoSelecionado, setEventoSelecionado] = useState<Partial<CalendarEvent> | null>(null);
+  const [eventoSelecionado, setEventoSelecionado] =
+    useState<Partial<CalendarEvent> | null>(null);
   const [etapas, setEtapas] = useState<EtapaFunil[]>(mockEtapasFunil);
   const [etapaModalOpen, setEtapaModalOpen] = useState(false);
   const [etapaEditando, setEtapaEditando] = useState<EtapaFunil | null>(null);
@@ -44,20 +56,26 @@ export default function Leads() {
   };
 
   const handleSaveLead = (lead: Lead) => {
-    const leadExiste = leads.find(l => l.id === lead.id);
-    
+    const leadExiste = leads.find((l) => l.id === lead.id);
+
     if (leadExiste) {
-      setLeads(prev => prev.map(l => l.id === lead.id ? { ...lead, atualizadoEm: getCurrentTimestamp() } : l));
+      setLeads((prev) =>
+        prev.map((l) =>
+          l.id === lead.id
+            ? { ...lead, atualizadoEm: getCurrentTimestamp() }
+            : l
+        )
+      );
       toast.success("Lead atualizado com sucesso!");
     } else {
-      setLeads(prev => [lead, ...prev]);
+      setLeads((prev) => [lead, ...prev]);
       toast.success("Lead criado com sucesso!");
     }
   };
 
   const handleDeleteLead = (id: string) => {
-    setLeads(prev => prev.filter(l => l.id !== id));
-    setNotas(prev => prev.filter(n => n.leadId !== id));
+    setLeads((prev) => prev.filter((l) => l.id !== id));
+    setNotas((prev) => prev.filter((n) => n.leadId !== id));
     toast.success("Lead excluído com sucesso!");
   };
 
@@ -67,12 +85,12 @@ export default function Leads() {
       id: Date.now().toString(),
       criadoEm: getCurrentTimestamp(),
     };
-    setNotas(prev => [...prev, novaNota]);
+    setNotas((prev) => [...prev, novaNota]);
     toast.success("Nota adicionada com sucesso!");
   };
 
   const handleCreateTask = (leadId: string) => {
-    const lead = leads.find(l => l.id === leadId);
+    const lead = leads.find((l) => l.id === leadId);
     setEventoSelecionado({
       tipo: "tarefa",
       leadId: leadId,
@@ -83,7 +101,7 @@ export default function Leads() {
   };
 
   const handleCreateMeeting = (leadId: string) => {
-    const lead = leads.find(l => l.id === leadId);
+    const lead = leads.find((l) => l.id === leadId);
     setEventoSelecionado({
       tipo: "reuniao",
       leadId: leadId,
@@ -95,34 +113,40 @@ export default function Leads() {
 
   const handleSaveCalendarEvent = (eventData: Partial<CalendarEvent>) => {
     const eventoId = eventData.id || Date.now().toString();
-    
+
     // Adicionar ao histórico do lead
     if (eventData.leadId) {
       const nota: NotaLead = {
         id: Date.now().toString() + "_nota",
         leadId: eventData.leadId,
-        texto: `${eventData.tipo === 'tarefa' ? 'Tarefa' : 'Reunião'}: ${eventData.titulo}`,
+        texto: `${eventData.tipo === "tarefa" ? "Tarefa" : "Reunião"}: ${
+          eventData.titulo
+        }`,
         autor: "Agência Brakeel",
         criadoEm: getCurrentTimestamp(),
-        tipo: eventData.tipo as 'tarefa' | 'reuniao',
+        tipo: eventData.tipo as "tarefa" | "reuniao",
         calendarioEventoId: eventoId,
       };
-      setNotas(prev => [...prev, nota]);
+      setNotas((prev) => [...prev, nota]);
     }
-    
-    toast.success(`${eventData.tipo === 'tarefa' ? 'Tarefa' : 'Reunião'} criada e adicionada ao calendário!`);
+
+    toast.success(
+      `${
+        eventData.tipo === "tarefa" ? "Tarefa" : "Reunião"
+      } criada e adicionada ao calendário!`
+    );
     setCalendarModalOpen(false);
     setModalOpen(true);
   };
 
   const handleSaveEtapa = (etapa: EtapaFunil) => {
-    const etapaExiste = etapas.find(e => e.id === etapa.id);
-    
+    const etapaExiste = etapas.find((e) => e.id === etapa.id);
+
     if (etapaExiste) {
-      setEtapas(prev => prev.map(e => e.id === etapa.id ? etapa : e));
+      setEtapas((prev) => prev.map((e) => (e.id === etapa.id ? etapa : e)));
       toast.success("Etapa atualizada!");
     } else {
-      setEtapas(prev => [...prev, etapa]);
+      setEtapas((prev) => [...prev, etapa]);
       toast.success("Etapa criada!");
     }
     setEtapaModalOpen(false);
@@ -136,24 +160,22 @@ export default function Leads() {
 
   const handleNovaLeadPadrao = () => handleNovaLead("novo");
 
-
-
-
-
-  
-
   return (
     <Layout>
-      <div className="p-8 space-y-6">
+      <div className=" space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
+          <div className="text-center lg:text-left">
             <h1 className="text-3xl font-bold">Leads</h1>
             <p className="text-muted-foreground mt-1">
               Gerencie seu funil de vendas
             </p>
           </div>
-          <Button size="lg" onClick={handleNovaLeadPadrao}>
+          <Button
+            size="lg"
+            onClick={handleNovaLeadPadrao}
+            className="w-full sm:w-auto"
+          >
             <Plus className="w-5 h-5 mr-2" />
             Nova Lead
           </Button>
@@ -172,16 +194,16 @@ export default function Leads() {
           </div>
           <div className="flex gap-2">
             <Button
-              variant={visualizacao === 'kanban' ? 'default' : 'outline'}
+              variant={visualizacao === "kanban" ? "default" : "outline"}
               size="icon"
-              onClick={() => setVisualizacao('kanban')}
+              onClick={() => setVisualizacao("kanban")}
             >
               <LayoutGrid className="w-5 h-5" />
             </Button>
             <Button
-              variant={visualizacao === 'lista' ? 'default' : 'outline'}
+              variant={visualizacao === "lista" ? "default" : "outline"}
               size="icon"
-              onClick={() => setVisualizacao('lista')}
+              onClick={() => setVisualizacao("lista")}
             >
               <List className="w-5 h-5" />
             </Button>
@@ -189,9 +211,9 @@ export default function Leads() {
         </div>
 
         {/* Content */}
-        {visualizacao === 'kanban' ? (
-          <LeadsKanban 
-            busca={busca} 
+        {visualizacao === "kanban" ? (
+          <LeadsKanban
+            busca={busca}
             leads={leads}
             notas={notas}
             onLeadClick={(lead) => {
@@ -201,10 +223,10 @@ export default function Leads() {
             onUpdateLeads={setLeads}
             etapas={etapas}
             onAddEtapa={handleAddEtapa}
-             onAddLead={handleNovaLead}
+            onAddLead={handleNovaLead}
           />
         ) : (
-          <LeadsLista 
+          <LeadsLista
             busca={busca}
             leads={leads}
             notas={notas}
@@ -227,7 +249,7 @@ export default function Leads() {
           onCreateMeeting={handleCreateMeeting}
           etapas={etapas}
         />
-  
+
         <CalendarEventModal
           open={calendarModalOpen}
           onClose={() => {

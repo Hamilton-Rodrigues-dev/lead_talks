@@ -72,7 +72,7 @@ function AppSidebar() {
           // 👉 Quando aberto, mostra logo + título + botão
           <>
             <div className="flex items-center gap-2">
-              <img src={logo} alt="Logo" className="h-9" />
+              <img src={logo} alt="Logo" className="h-9 rounded-[8px]" />
               <div>
                 <h1 className="text-base font-semibold text-sidebar-foreground">
                   Lead Talks
@@ -181,7 +181,7 @@ function MobileSidebar({ onClose }: { onClose: () => void }) {
     <div className="flex flex-col h-full">
       <div className="p-6 border-b border-border">
         <div className="flex items-center gap-3">
-          <img src={logo} alt="Logo" className="h-10" />
+          <img src={logo} alt="Logo" className="h-10 rounded-[8px]" />
           <div>
             <h1 className="text-lg font-bold">Lead Talks</h1>
             <p className="text-xs text-muted-foreground">CRM System</p>
@@ -272,7 +272,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </Sheet>
 
             <div className="flex items-center gap-2">
-              <img src={logo} alt="Logo" className="h-8" />
+              <img src={logo} alt="Logo" className="h-8 rounded-[8px]" />
               <h1 className="font-bold">Lead Talks</h1>
             </div>
 

@@ -19,7 +19,7 @@ export default function Dashboard() {
 
   return (
     <Layout>
-      <div className="p-8 space-y-8">
+      <div className="space-y-8">
         {/* Header */}
         <div>
           <h1 className="text-3xl font-bold">Dashboard</h1>

@@ -30,9 +30,10 @@ export default function Contatos() {
     segmento: "",
   });
 
-  const contatosFiltrados = contatos.filter((contato) =>
-    contato.nome.toLowerCase().includes(busca.toLowerCase()) ||
-    contato.segmento.toLowerCase().includes(busca.toLowerCase())
+  const contatosFiltrados = contatos.filter(
+    (contato) =>
+      contato.nome.toLowerCase().includes(busca.toLowerCase()) ||
+      contato.segmento.toLowerCase().includes(busca.toLowerCase())
   );
 
   const abrirModal = (contato?: Contato) => {
@@ -57,17 +58,17 @@ export default function Contatos() {
     }
 
     if (contatoEditando) {
-      setContatos(contatos.map(c => 
-        c.id === contatoEditando.id 
-          ? { ...c, ...formData }
-          : c
-      ));
+      setContatos(
+        contatos.map((c) =>
+          c.id === contatoEditando.id ? { ...c, ...formData } : c
+        )
+      );
       toast.success("Contato atualizado com sucesso");
     } else {
       const novoContato: Contato = {
         id: Date.now().toString(),
         ...formData,
-        dataEntrada: new Date().toISOString().split('T')[0],
+        dataEntrada: new Date().toISOString().split("T")[0],
       };
       setContatos([novoContato, ...contatos]);
       toast.success("Contato criado com sucesso");
@@ -80,7 +81,7 @@ export default function Contatos() {
 
   const excluirContato = () => {
     if (contatoParaExcluir) {
-      setContatos(contatos.filter(c => c.id !== contatoParaExcluir));
+      setContatos(contatos.filter((c) => c.id !== contatoParaExcluir));
       toast.success("Contato excluído com sucesso");
       setContatoParaExcluir(null);
     }
@@ -88,16 +89,16 @@ export default function Contatos() {
 
   return (
     <Layout>
-      <div className="p-8 space-y-6">
+      <div className="p-4 lg:p-8 space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
+          <div className="text-center lg:text-left">
             <h1 className="text-3xl font-bold">Contatos</h1>
             <p className="text-muted-foreground mt-1">
               Gerencie sua base de contatos
             </p>
           </div>
-          <Button onClick={() => abrirModal()} size="lg">
+          <Button onClick={() => abrirModal()} size="lg" className="w-full sm:w-auto">
             <Plus className="w-5 h-5 mr-2" />
             Adicionar
           </Button>
@@ -114,9 +115,10 @@ export default function Contatos() {
           />
         </div>
 
-        {/* Table */}
+        {/* Table / Cards */}
         <div className="bg-card rounded-xl border border-border overflow-hidden">
-          <div className="overflow-x-auto">
+          {/* --- VISUAL DESKTOP (tabela) --- */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="bg-muted/50 border-b border-border">
@@ -138,7 +140,7 @@ export default function Contatos() {
                     <td className="p-4 text-muted-foreground">{contato.segmento}</td>
                     <td className="p-4 text-muted-foreground">{contato.telefone}</td>
                     <td className="p-4 text-muted-foreground">
-                      {new Date(contato.dataEntrada).toLocaleDateString('pt-BR')}
+                      {new Date(contato.dataEntrada).toLocaleDateString("pt-BR")}
                     </td>
                     <td className="p-4 text-right">
                       <Button
@@ -156,6 +158,46 @@ export default function Contatos() {
                 ))}
               </tbody>
             </table>
+          </div>
+
+          {/* --- VISUAL MOBILE (cards) --- */}
+          <div className="block md:hidden divide-y divide-border">
+            {contatosFiltrados.map((contato) => (
+              <div
+                key={contato.id}
+                className="p-4 space-y-2 hover:bg-muted/20 transition-colors cursor-pointer"
+                onClick={() => abrirModal(contato)}
+              >
+                <div>
+                  <p className="text-sm text-muted-foreground">Nome</p>
+                  <p className="font-semibold">{contato.nome}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Segmento</p>
+                  <p>{contato.segmento}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Telefone</p>
+                  <p>{contato.telefone}</p>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Data de entrada</p>
+                    <p>{new Date(contato.dataEntrada).toLocaleDateString("pt-BR")}</p>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setContatoParaExcluir(contato.id);
+                    }}
+                  >
+                    <Trash2 className="w-4 h-4 text-destructive" />
+                  </Button>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -214,7 +256,10 @@ export default function Contatos() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={excluirContato} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+            <AlertDialogAction
+              onClick={excluirContato}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
               Excluir
             </AlertDialogAction>
           </AlertDialogFooter>
