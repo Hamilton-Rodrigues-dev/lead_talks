@@ -275,7 +275,7 @@ export default function Calendario() {
                     key={index}
                     className={`min-h-[120px] border-r border-b border-border p-2 ${
                       !item.mesAtual
-                        ? "bg-muted/20 text-muted-foreground"
+                        ? "bg-muted/20 text-muted-foreground/60 opacity-60"
                         : "hover:bg-muted/30"
                     } transition-colors cursor-pointer`}
                     onClick={() =>

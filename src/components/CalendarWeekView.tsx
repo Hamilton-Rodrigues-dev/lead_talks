@@ -35,9 +35,9 @@ const shortWeekday = (d: Date) => {
   return map[d.getDay()];
 };
 
-const TIME_COL_PX = 44;          // coluna de horários: mínima possível
-const DAY_MIN_PX = 120;          // largura mínima de cada dia em telas estreitas
-const ROW_MIN_H = 48;            // altura da célula (múltiplo de 4pt)
+const TIME_COL_PX = 44; // coluna de horários: mínima possível
+const DAY_MIN_PX = 120; // largura mínima de cada dia em telas estreitas
+const ROW_MIN_H = 48; // altura da célula (múltiplo de 4pt)
 
 export default function CalendarWeekView({
   weekStart,
@@ -71,13 +71,13 @@ export default function CalendarWeekView({
           }}
         >
           {/* coluna vazia dos horários */}
-          <div className="p-1" />
+          <div className="w-auto" />
           {days.map((day, i) => {
             const isToday = isSameDay(day, hoje);
             return (
               <div
                 key={i}
-                className={`p-2 text-center border-l border-border ${
+                className={`flex flex-col items-center justify-center p-2 text-center ${
                   isToday ? "bg-primary/10" : ""
                 }`}
               >
@@ -142,7 +142,9 @@ export default function CalendarWeekView({
                               e.stopPropagation();
                               onEventClick(event);
                             }}
-                            className={`${eventColors[event.tipo]} text-white w-full max-w-full p-1.5 rounded-md text-[11px] leading-tight cursor-pointer transition-colors shadow-sm`}
+                            className={`${
+                              eventColors[event.tipo]
+                            } text-white w-full max-w-full p-1.5 rounded-md text-[11px] leading-tight cursor-pointer transition-colors shadow-sm`}
                             style={{
                               wordBreak: "break-word",
                             }}
