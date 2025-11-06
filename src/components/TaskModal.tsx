@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -82,16 +81,7 @@ export default function TaskModal({ open, onClose, onSave, onDelete, tarefa, lea
           <DialogHeader>
             <div className="flex items-center justify-between">
               <DialogTitle className="text-primary">Nova Tarefa</DialogTitle>
-              {tarefa && onDelete && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setShowDeleteDialog(true)}
-                  className="text-destructive hover:text-destructive"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              )}
+             
             </div>
           </DialogHeader>
 
@@ -180,13 +170,25 @@ export default function TaskModal({ open, onClose, onSave, onDelete, tarefa, lea
             </div>
           </div>
 
-          <div className="flex justify-end gap-2 mt-6">
-            <Button variant="outline" onClick={onClose}>
+          <div className="flex justify-between gap-2 mt-6">
+             {tarefa && onDelete && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowDeleteDialog(true)}
+                  className="text-destructive hover:text-destructive"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              )}
+          <div className="flex justify-between gap-2">
+              <Button variant="outline" onClick={onClose}>
               Cancelar
             </Button>
             <Button onClick={handleSave} disabled={!descricao || !dataEntrega}>
               Salvar
             </Button>
+          </div>
           </div>
         </DialogContent>
       </Dialog>
