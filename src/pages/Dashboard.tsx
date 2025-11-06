@@ -36,7 +36,7 @@ const navigate = useNavigate();
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 Leads Ativos
               </CardTitle>
-              <Target className="h-5 w-5 text-primary" />
+              <Target className="!h-10 !w-10 lg:!h-6 lg:!w-6 text-primary" />
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">{leadsAtivos}</div>
@@ -51,7 +51,7 @@ const navigate = useNavigate();
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 Tarefas Pendentes
               </CardTitle>
-              <Clock className="h-5 w-5 text-orange-500" />
+              <Clock className="!h-10 !w-10 lg:!h-6 lg:!w-6 text-orange-500" />
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">{tarefasPendentes}</div>
@@ -66,7 +66,7 @@ const navigate = useNavigate();
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 Taxa de Conclusão
               </CardTitle>
-              <CheckCircle2 className="h-5 w-5 text-green-500" />
+              <CheckCircle2 className="!h-10 !w-10 lg:!h-6 lg:!w-6 text-green-500" />
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">{percentualConclusao}%</div>
@@ -81,7 +81,7 @@ const navigate = useNavigate();
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 Conversão
               </CardTitle>
-              <TrendingUp className="h-5 w-5 text-blue-500" />
+              <TrendingUp className="!h-10 !w-10 lg:!h-6 lg:!w-6 text-blue-500" />
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">--</div>

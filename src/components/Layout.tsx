@@ -293,8 +293,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <div className="flex items-center justify-between">
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <Menu className="w-6 h-6" />
+                <Button variant="ghost" className="w-14 h-14 p-0 flex items-center justify-center">
+                  <Menu className="!w-8 !h-8 "/>
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="p-0 w-72">
