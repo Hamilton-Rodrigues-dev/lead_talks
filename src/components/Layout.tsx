@@ -28,6 +28,7 @@ import {
   Menu,
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import logo from "@/assets/logo.png";
 
 // --- Menu principal ---
@@ -62,7 +63,10 @@ function AppSidebar() {
       {/* Topo com logo */}
       <div className="border-b border-sidebar-border p-4 flex items-center justify-between">
         {collapsed ? (
-          <SidebarTrigger className="mx-auto text-muted-foreground hover:text-foreground" />
+          <div className="flex flex-col items-center gap-2 mx-auto">
+            <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
+            <ThemeToggle />
+          </div>
         ) : (
           <>
             <div className="flex items-center gap-2">
@@ -74,7 +78,10 @@ function AppSidebar() {
                 <p className="text-xs text-muted-foreground">CRM System</p>
               </div>
             </div>
-            <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
+            <div className="flex items-center gap-1">
+              <ThemeToggle />
+              <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
+            </div>
           </>
         )}
       </div>
@@ -296,7 +303,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <h1 className="font-bold text-[#5D0EC0]">Lead Talks</h1>
             </div>
 
-            <div className="w-10" />
+            <ThemeToggle />
           </div>
         </header>
 

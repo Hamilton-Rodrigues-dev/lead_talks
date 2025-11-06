@@ -23,6 +23,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useSorting } from "@/hooks/useSorting";
+import { SortableTableHeader } from "@/components/SortableTableHeader";
 
 export default function Contatos() {
   const [contatos, setContatos] = useState<Contato[]>(mockContatos);
@@ -42,6 +44,12 @@ export default function Contatos() {
     (contato) =>
       contato.nome.toLowerCase().includes(busca.toLowerCase()) ||
       contato.segmento.toLowerCase().includes(busca.toLowerCase())
+  );
+
+  const { sortedData, sortColumn, sortDirection, handleSort } = useSorting(
+    contatosFiltrados,
+    'dataEntrada',
+    'desc'
   );
 
   const abrirModal = (contato?: Contato) => {
@@ -154,23 +162,41 @@ export default function Contatos() {
             <table className="w-full">
               <thead>
                 <tr className="bg-muted/50 border-b border-border">
-                  <th className="text-left p-4 font-semibold text-sm">Nome</th>
-                  <th className="text-left p-4 font-semibold text-sm">
-                    Segmento
-                  </th>
-                  <th className="text-left p-4 font-semibold text-sm">
-                    Telefone
-                  </th>
-                  <th className="text-left p-4 font-semibold text-sm">
-                    Data de Entrada
-                  </th>
+                  <SortableTableHeader
+                    label="Nome"
+                    column="nome"
+                    sortColumn={sortColumn}
+                    sortDirection={sortDirection}
+                    onSort={handleSort}
+                  />
+                  <SortableTableHeader
+                    label="Segmento"
+                    column="segmento"
+                    sortColumn={sortColumn}
+                    sortDirection={sortDirection}
+                    onSort={handleSort}
+                  />
+                  <SortableTableHeader
+                    label="Telefone"
+                    column="telefone"
+                    sortColumn={sortColumn}
+                    sortDirection={sortDirection}
+                    onSort={handleSort}
+                  />
+                  <SortableTableHeader
+                    label="Data de Entrada"
+                    column="dataEntrada"
+                    sortColumn={sortColumn}
+                    sortDirection={sortDirection}
+                    onSort={handleSort}
+                  />
                   <th className="text-right p-4 font-semibold text-sm">
                     Ações
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {contatosFiltrados.map((contato) => (
+                {sortedData.map((contato) => (
                   <tr
                     key={contato.id}
                     className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors cursor-pointer"

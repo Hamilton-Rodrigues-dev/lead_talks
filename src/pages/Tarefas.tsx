@@ -7,15 +7,12 @@ import { mockTarefas, mockLeads, Tarefa } from "@/lib/mockData";
 import TaskModal from "@/components/TaskModal";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
+import { useSorting } from "@/hooks/useSorting";
+import { SortableTableHeader } from "@/components/SortableTableHeader";
 
 export default function Tarefas() {
   const [busca, setBusca] = useState("");
-  const [tarefas, setTarefas] = useState<Tarefa[]>(
-    [...mockTarefas].sort(
-      (a, b) =>
-        new Date(b.atualizadoEm).getTime() - new Date(a.atualizadoEm).getTime()
-    )
-  );
+  const [tarefas, setTarefas] = useState<Tarefa[]>(mockTarefas);
   const [modalOpen, setModalOpen] = useState(false);
   const [tarefaSelecionada, setTarefaSelecionada] = useState<Tarefa | null>(
     null
@@ -27,22 +24,23 @@ export default function Tarefas() {
       tarefa.descricaoTarefa.toLowerCase().includes(busca.toLowerCase())
   );
 
+  const { sortedData, sortColumn, sortDirection, handleSort } = useSorting(
+    tarefasFiltradas,
+    'atualizadoEm',
+    'desc'
+  );
+
   const handleSaveTarefa = (tarefaData: Partial<Tarefa>) => {
     const agora = new Date().toISOString();
 
     if (tarefaData.id) {
-      setTarefas((prev) => {
-        const updated = prev.map((t) =>
+      setTarefas((prev) =>
+        prev.map((t) =>
           t.id === tarefaData.id
             ? ({ ...t, ...tarefaData, atualizadoEm: agora } as Tarefa)
             : t
-        );
-        return updated.sort(
-          (a, b) =>
-            new Date(b.atualizadoEm).getTime() -
-            new Date(a.atualizadoEm).getTime()
-        );
-      });
+        )
+      );
       toast.success("Tarefa atualizada com sucesso!");
     } else {
       const novaTarefa: Tarefa = {
@@ -129,23 +127,45 @@ export default function Tarefas() {
             <table className="w-full">
               <thead>
                 <tr className="bg-muted/50 border-b border-border">
-                  <th className="text-left p-4 font-semibold text-sm">Nome</th>
-                  <th className="text-left p-4 font-semibold text-sm">
-                    Tarefa
-                  </th>
-                  <th className="text-left p-4 font-semibold text-sm">
-                    Data de Entrega
-                  </th>
-                  <th className="text-left p-4 font-semibold text-sm">
-                    Status
-                  </th>
-                  <th className="text-left p-4 font-semibold text-sm">
-                    Prioridade
-                  </th>
+                  <SortableTableHeader
+                    label="Nome"
+                    column="nomeLead"
+                    sortColumn={sortColumn}
+                    sortDirection={sortDirection}
+                    onSort={handleSort}
+                  />
+                  <SortableTableHeader
+                    label="Tarefa"
+                    column="descricaoTarefa"
+                    sortColumn={sortColumn}
+                    sortDirection={sortDirection}
+                    onSort={handleSort}
+                  />
+                  <SortableTableHeader
+                    label="Data de Entrega"
+                    column="dataEntrega"
+                    sortColumn={sortColumn}
+                    sortDirection={sortDirection}
+                    onSort={handleSort}
+                  />
+                  <SortableTableHeader
+                    label="Status"
+                    column="status"
+                    sortColumn={sortColumn}
+                    sortDirection={sortDirection}
+                    onSort={handleSort}
+                  />
+                  <SortableTableHeader
+                    label="Prioridade"
+                    column="prioridade"
+                    sortColumn={sortColumn}
+                    sortDirection={sortDirection}
+                    onSort={handleSort}
+                  />
                 </tr>
               </thead>
               <tbody>
-                {tarefasFiltradas.map((tarefa) => (
+                {sortedData.map((tarefa) => (
                   <tr
                     key={tarefa.id}
                     className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors cursor-pointer"
@@ -190,7 +210,7 @@ export default function Tarefas() {
 
           {/* Mobile Cards */}
           <div className="md:hidden p-4 space-y-3">
-            {tarefasFiltradas.map((tarefa) => (
+            {sortedData.map((tarefa) => (
               <div
                 key={tarefa.id}
                 onClick={() => handleOpenModal(tarefa)}
