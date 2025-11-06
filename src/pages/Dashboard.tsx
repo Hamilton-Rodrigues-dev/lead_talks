@@ -94,7 +94,7 @@ const navigate = useNavigate();
 
         {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card onClick={() => navigate("/leads")}>
+          <Card onClick={() => navigate("/leads")} className="cursor-pointer">
             <CardHeader>
               <CardTitle>Leads por Etapa do Funil</CardTitle>
             </CardHeader>
@@ -118,7 +118,7 @@ const navigate = useNavigate();
             </CardContent>
           </Card>
 
-          <Card onClick={() => navigate("/tarefas")}>
+          <Card onClick={() => navigate("/tarefas")} className="cursor-pointer">
             <CardHeader>
               <CardTitle>Atividades Recentes</CardTitle>
             </CardHeader>
