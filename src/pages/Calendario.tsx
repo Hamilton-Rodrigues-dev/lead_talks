@@ -154,8 +154,8 @@ export default function Calendario() {
           </div>
         </div>
             <div className="w-full relative ">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input placeholder="Buscar eventos..." className="pl-9 bg-card" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+              <Input placeholder="Buscar eventos..." className="pl-10 h-12 bg-card lg:w-[420px]" />
             </div>
 
         {/* Toolbar */}

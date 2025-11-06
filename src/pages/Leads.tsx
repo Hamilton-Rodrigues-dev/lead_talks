@@ -189,7 +189,7 @@ export default function Leads() {
               placeholder="Buscar leads..."
               value={busca}
               onChange={(e) => setBusca(e.target.value)}
-              className="pl-10 h-12 bg-card"
+              className="pl-10 h-12 bg-card lg:w-[420px]"
             />
           </div>
           <div className="flex gap-2">

@@ -151,7 +151,7 @@ export default function Contatos() {
             placeholder="Buscar contatos..."
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
-            className="pl-10 h-12 bg-card"
+            className="pl-10 h-12 bg-card lg:w-[420px]"
           />
         </div>
 
