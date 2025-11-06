@@ -188,7 +188,7 @@ export default function LeadsKanban({
               </div>
 
               {/* Lista vertical dos leads */}
-              <div className="space-y-3">
+              <div className="space-y-5 !mb-14">
                 {leadsEtapa.map((lead) => (
                   <Card
                     key={lead.id}
