@@ -94,7 +94,7 @@ const navigate = useNavigate();
 
         {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card>
+          <Card onClick={() => navigate("/leads")}>
             <CardHeader>
               <CardTitle>Leads por Etapa do Funil</CardTitle>
             </CardHeader>
@@ -118,7 +118,7 @@ const navigate = useNavigate();
             </CardContent>
           </Card>
 
-          <Card>
+          <Card onClick={() => navigate("/tarefas")}>
             <CardHeader>
               <CardTitle>Atividades Recentes</CardTitle>
             </CardHeader>
