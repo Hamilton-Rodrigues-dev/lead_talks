@@ -69,7 +69,7 @@ export default function LeadsKanban({
         onMouseLeave={dragScroll.onMouseLeave}
         onMouseUp={dragScroll.onMouseUp}
         onMouseMove={dragScroll.onMouseMove}
-        className={`hidden md:flex gap-6 overflow-x-auto pb-4 select-none ${
+        className={`hidden md:flex gap-6 overflow-x-hidden pb-4 select-none ${
           dragScroll.isDragging ? "cursor-grabbing" : "cursor-grab"
         }`}
       >
