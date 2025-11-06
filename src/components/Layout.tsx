@@ -61,9 +61,13 @@ function AppSidebar() {
   return (
     <Sidebar collapsible="icon">
       {/* Topo com logo */}
-      <div className="border-b border-sidebar-border p-4 flex items-center justify-between">
+      <div
+        className={`border-b border-sidebar-border p-4 flex items-center ${
+          collapsed ? "justify-center" : "justify-between"
+        }`}
+      >
         {collapsed ? (
-          <div className="flex flex-col items-center gap-2 mx-auto">
+          <div className="flex flex-col items-center justify-center gap-2 mx-auto">
             <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
             <ThemeToggle />
           </div>
