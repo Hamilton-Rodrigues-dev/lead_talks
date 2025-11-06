@@ -59,7 +59,7 @@ export default function CalendarWeekView({
   const gridMinWidth = TIME_COL_PX + 7 * DAY_MIN_PX; // px
 
   return (
-    <div className="bg-card rounded-xl border border-border overflow-hidden">
+    <div className="bg-card rounded-xl border border-border overflow-auto">
   {/* Wrapper geral com grid único */}
   <div
     className="overflow-x-auto"
