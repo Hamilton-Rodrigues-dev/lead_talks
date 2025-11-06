@@ -60,119 +60,108 @@ export default function CalendarWeekView({
 
   return (
     <div className="bg-card rounded-xl border border-border overflow-hidden">
-      {/* WRAPPER com scroll-x para telas estreitas */}
-      <div className="overflow-x-auto">
-        {/* HEADER */}
-        <div
-          className="grid border-b border-border bg-muted/30"
-          style={{
-            minWidth: gridMinWidth,
-            gridTemplateColumns: `minmax(${TIME_COL_PX}px, ${TIME_COL_PX}px) repeat(7, minmax(${DAY_MIN_PX}px, 1fr))`,
-          }}
-        >
-          {/* coluna vazia dos horários */}
-          <div className="w-auto" />
-          {days.map((day, i) => {
-            const isToday = isSameDay(day, hoje);
-            return (
-              <div
-                key={i}
-                className={`flex flex-col items-center justify-center p-2 text-center ${
-                  isToday ? "bg-primary/10" : ""
-                }`}
-              >
-                <div className="text-xs leading-none text-muted-foreground font-medium">
-                  {shortWeekday(day)}
-                </div>
-                <div
-                  className={`text-base md:text-lg font-semibold leading-tight ${
-                    isToday ? "text-primary" : ""
-                  }`}
-                >
-                  {format(day, "dd", { locale: ptBR })}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* GRID DE HORÁRIOS */}
-        <div
-          className="max-h-[600px] overflow-y-auto"
-          style={{ minWidth: gridMinWidth }}
-        >
-          {timeSlots.map((time) => (
+  {/* Wrapper geral com grid único */}
+  <div
+    className="overflow-x-auto"
+    style={{
+      minWidth: gridMinWidth,
+    }}
+  >
+    <div
+      className="grid"
+      style={{
+        gridTemplateColumns: `minmax(${TIME_COL_PX}px, ${TIME_COL_PX}px) repeat(7, minmax(${DAY_MIN_PX}px, 1fr))`,
+        gridTemplateRows: `auto repeat(${timeSlots.length}, minmax(${ROW_MIN_H}px, auto))`,
+      }}
+    >
+      {/* Cabeçalho */}
+      <div className="border-b border-border bg-muted/30" />
+      {days.map((day, i) => {
+        const isToday = isSameDay(day, hoje);
+        return (
+          <div
+            key={`head-${i}`}
+            className={`flex flex-col items-center justify-center p-2 text-center border-l border-border ${
+              isToday ? "bg-primary/10" : ""
+            }`}
+          >
+            <div className="text-xs leading-none text-muted-foreground font-medium">
+              {shortWeekday(day)}
+            </div>
             <div
-              key={time}
-              className="grid border-b border-border hover:bg-muted/20 transition-colors"
-              style={{
-                gridTemplateColumns: `minmax(${TIME_COL_PX}px, ${TIME_COL_PX}px) repeat(7, minmax(${DAY_MIN_PX}px, 1fr))`,
-              }}
+              className={`text-base md:text-lg font-semibold leading-tight ${
+                isToday ? "text-primary" : ""
+              }`}
             >
-              {/* coluna do horário */}
-              <div className="px-1 py-1 text-[10px] md:text-xs text-muted-foreground text-right border-r border-border select-none">
-                {time}
-              </div>
+              {format(day, "dd", { locale: ptBR })}
+            </div>
+          </div>
+        );
+      })}
 
-              {/* 7 dias */}
-              {days.map((day, i) => {
-                const slotEvents = getEventsForSlot(day, time);
-                const isToday = isSameDay(day, hoje);
+      {/* Linhas de horários */}
+     {timeSlots.map((time, rowIndex) => (
+  <>
+    {/* Coluna de horários */}
+    <div
+      key={`time-${rowIndex}`}
+      className="flex items-center justify-center text-[10px] md:text-xs text-muted-foreground border-t border-r border-border select-none bg-background"
+    >
+      {time}
+    </div>
 
-                return (
-                  <div
-                    key={i}
-                    className={`relative border-l border-border cursor-pointer`}
-                    style={{ minHeight: ROW_MIN_H }}
-                    onClick={() => onTimeSlotClick(day, time)}
-                  >
-                    {/* highlight do dia atual sem afetar as bordas */}
-                    {isToday && (
-                      <div className="absolute inset-0 bg-primary/5 pointer-events-none" />
-                    )}
+    {/* Células de dias */}
+    {days.map((day, i) => {
+      const slotEvents = getEventsForSlot(day, time);
+      const isToday = isSameDay(day, hoje);
+      return (
+        <div
+          key={`cell-${rowIndex}-${i}`}
+          className={`relative border-t border-l border-border cursor-pointer hover:bg-muted/10 transition-colors`}
+          onClick={() => onTimeSlotClick(day, time)}
+        >
+          {isToday && (
+            <div className="absolute inset-0 bg-primary/5 pointer-events-none" />
+          )}
 
-                    {/* eventos (sempre dentro da coluna) */}
-                    <div className="relative z-[1] p-1">
-                      {slotEvents.map((event) => {
-                        const Icon = eventIcons[event.tipo];
-                        return (
-                          <div
-                            key={event.id}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onEventClick(event);
-                            }}
-                            className={`${
-                              eventColors[event.tipo]
-                            } text-white w-full max-w-full p-1.5 rounded-md text-[11px] leading-tight cursor-pointer transition-colors shadow-sm`}
-                            style={{
-                              wordBreak: "break-word",
-                            }}
-                          >
-                            <div className="flex items-start gap-1">
-                              <Icon className="w-3 h-3 flex-shrink-0 mt-0.5" />
-                              <div className="flex-1 min-w-0">
-                                <div className="font-medium truncate">
-                                  {event.titulo}
-                                </div>
-                                {event.nomeLead && (
-                                  <div className="text-[10px] opacity-90 truncate">
-                                    {event.nomeLead}
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
+          <div className="relative z-[1] p-1">
+            {slotEvents.map((event) => {
+              const Icon = eventIcons[event.tipo];
+              return (
+                <div
+                  key={event.id}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEventClick(event);
+                  }}
+                  className={`${eventColors[event.tipo]} text-white w-full max-w-full p-1.5 rounded-md text-[11px] leading-tight cursor-pointer transition-colors shadow-sm`}
+                >
+                  <div className="flex items-start gap-1">
+                    <Icon className="w-3 h-3 flex-shrink-0 mt-0.5" />
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium truncate">
+                        {event.titulo}
+                      </div>
+                      {event.nomeLead && (
+                        <div className="text-[10px] opacity-90 truncate">
+                          {event.nomeLead}
+                        </div>
+                      )}
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          ))}
+                </div>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      );
+    })}
+  </>
+))}
+
     </div>
+  </div>
+</div>
+
   );
 }
