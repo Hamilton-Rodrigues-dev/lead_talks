@@ -242,7 +242,7 @@ export default function LeadsKanban({
 
         {/* Adicionar nova etapa */}
         <div className="border-2 border-dashed border-muted-foreground/40 rounded-lg p-4 text-center">
-          <Button onClick={onAddEtapa} variant="outline" className="w-full justify-center">
+          <Button onClick={onAddEtapa} variant="outline" className="w-full justify-center border-0">
             <Plus className="w-5 h-5 mr-2" /> Adicionar Nova Etapa
           </Button>
         </div>
